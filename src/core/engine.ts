@@ -1,6 +1,6 @@
 import { gl, GLUtilities } from './gl/gl';
-import { AttributeInfo, GLBuffer } from './gl/glBuffer';
 import { Shader } from './gl/shader';
+import { Sprite } from './graphics/sprite';
 
 /**
  * The main game engine class
@@ -11,8 +11,7 @@ export class Engine {
   // @ts-ignore
   private _shader: Shader;
   // @ts-ignore
-  private _buffer: GLBuffer;
-
+  private _sprite: Sprite;
   /**
    * Creates a new engine
    */
@@ -29,7 +28,8 @@ export class Engine {
     this.loadShaders();
     this._shader.use();
 
-    this.createBuffer();
+    this._sprite = new Sprite('test');
+    this._sprite.load();
 
     this.resize();
     this.loop();
@@ -54,34 +54,9 @@ export class Engine {
     const colorPosition = this._shader.getUniformLocation('u_color');
     gl.uniform4f(colorPosition, 1, 0.5, 0.6, 1);
 
-    this._buffer.bind();
-    this._buffer.draw();
+    this._sprite.draw();
 
     requestAnimationFrame(this.loop.bind(this));
-  }
-
-  private createBuffer(): void {
-    this._buffer = new GLBuffer(3);
-
-    let positionAttribute = new AttributeInfo();
-    positionAttribute.location =
-      this._shader.getAttributeLocation('a_position');
-    positionAttribute.offset = 0;
-    positionAttribute.size = 3;
-    this._buffer.addAttributeLocation(positionAttribute);
-    let vertices = [
-      // x, y, z
-      // v1
-      0, 0, 0,
-      // v2
-      0, 0.5, 0,
-      // v3
-      0.5, 0.5, 0,
-    ];
-
-    this._buffer.pushBackData(vertices);
-    this._buffer.upload();
-    this._buffer.unbind();
   }
 
   private loadShaders(): void {
