@@ -1,6 +1,7 @@
 import { gl, GLUtilities } from './gl/gl';
 import { Shader } from './gl/shader';
 import { Sprite } from './graphics/sprite';
+import { Matrix4x4 } from './math/matrix4x4';
 
 /**
  * The main game engine class
@@ -12,6 +13,9 @@ export class Engine {
   private _shader: Shader;
   // @ts-ignore
   private _sprite: Sprite;
+  // @ts-ignore
+  private _projection: Matrix4x4;
+
   /**
    * Creates a new engine
    */
@@ -43,7 +47,17 @@ export class Engine {
       this._canvas.width = window.innerWidth;
       this._canvas.height = window.innerHeight;
 
+      this._projection = Matrix4x4.orthographic(
+        0,
+        this._canvas.width,
+        0,
+        this._canvas.height,
+        -100.0,
+        100.0
+      );
       gl.viewport(0, 0, this._canvas.width, this._canvas.height);
+
+      //gl.viewport(-1, 1, -1, 1);
     }
   }
 
@@ -54,6 +68,19 @@ export class Engine {
     const colorPosition = this._shader.getUniformLocation('u_color');
     gl.uniform4f(colorPosition, 1, 0.5, 0.6, 1);
 
+    const projectionPosition = this._shader.getUniformLocation('u_projection');
+    gl.uniformMatrix4fv(
+      projectionPosition,
+      false,
+      new Float32Array(this._projection.data)
+    );
+
+    let modelLocation = this._shader.getUniformLocation('u_model');
+    gl.uniformMatrix4fv(
+      modelLocation,
+      false,
+      new Float32Array(Matrix4x4.translation(this._sprite.position).data)
+    );
     this._sprite.draw();
 
     requestAnimationFrame(this.loop.bind(this));
@@ -63,8 +90,11 @@ export class Engine {
     const vertexShaderSource = `
     attribute vec3 a_position;
 
+    uniform mat4 u_projection;
+    uniform mat4 u_model;
+
     void main() {
-      gl_Position = vec4(a_position, 1.0);
+      gl_Position = u_projection * u_model * vec4(a_position, 1.0);
     }
     `;
 

@@ -1,4 +1,5 @@
 import { AttributeInfo, GLBuffer } from '../gl/glBuffer';
+import { Vector3 } from '../math/vector3';
 
 export class Sprite {
   private _name: string;
@@ -7,7 +8,9 @@ export class Sprite {
   // @ts-ignore
   private _buffer: GLBuffer;
 
-  public constructor(name: string, width: number = 10, height: number = 10) {
+  public position: Vector3 = new Vector3();
+
+  public constructor(name: string, width: number = 100, height: number = 100) {
     this._name = name;
     this._width = width;
     this._height = height;
@@ -27,10 +30,26 @@ export class Sprite {
     let vertices = [
       // x, y, z
       // triangle 1
-      0, 0, 0, 0, 0.5, 0, 0.5, 0.5, 0,
+      0,
+      0,
+      0,
+      0,
+      this._height,
+      0,
+      this._width,
+      this._height,
+      0,
 
       // triangle 2
-      0.5, 0.5, 0, 0.5, 0, 0, 0, 0, 0,
+      this._width,
+      this._height,
+      0,
+      this._width,
+      0,
+      0,
+      0,
+      0,
+      0,
     ];
 
     this._buffer.pushBackData(vertices);
