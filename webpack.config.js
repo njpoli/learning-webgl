@@ -20,7 +20,14 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
-  plugins: [new MiniCssExtractPlugin(), new HtmlWebpackPlugin()],
+  plugins: [
+    new MiniCssExtractPlugin(),
+    new HtmlWebpackPlugin({
+      hash: true,
+      title: 'Learning WebGL',
+      template: './src/index.html',
+    }),
+  ],
   module: {
     rules: [
       {

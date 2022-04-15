@@ -1,17 +1,13 @@
 import './style.css';
+import { Engine } from './core/engine';
 
-function component() {
-  const element = document.createElement('canvas');
-  element.id = 'main-canvas';
-  element.width = window.innerWidth;
-  element.height = window.innerHeight;
+var engine: Engine;
+// The main entry point to the application
+window.onload = function () {
+  engine = new Engine();
+  engine.start();
+};
 
-  const context = element.getContext('2d');
-
-  context?.beginPath();
-  context?.rect(500, 300, 300, 300);
-  context?.stroke();
-  return element;
-}
-
-document.body.appendChild(component());
+window.onresize = function () {
+  engine.resize();
+};
