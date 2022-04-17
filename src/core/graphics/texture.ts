@@ -44,7 +44,6 @@ export class Texture implements IMessageHandler {
 
     const asset = AssetManager.getAsset(this._name) as ImageAsset;
     if (asset) {
-      console.log(`loading texture from asset`);
       this.loadTextureFromAsset(asset);
     }
   }
