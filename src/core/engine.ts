@@ -47,20 +47,16 @@ export class Engine {
     this._basicShader.use();
 
     // Load materials
-    //MaterialManager.registerMaterial(
-    //new Material(
-    //'stoneWall',
-    //'src/assets/textures/stone_wall_128x128.jpg',
-    //new Color(255, 128, 0, 0)
-    //)
-    //);
+    MaterialManager.registerMaterial(
+      new Material(
+        'stoneWall',
+        'src/assets/textures/stone_wall_128x128.jpg',
+        new Color(255, 128, 0, 0)
+      )
+    );
 
     // Load
-    //this._sprite = new Sprite('test', 'stoneWall');
-    this._sprite = new Sprite(
-      'test',
-      'src/assets/textures/stone_wall_128x128.jpg'
-    );
+    this._sprite = new Sprite('test', 'stoneWall');
     this._sprite.load();
     this._sprite.position.x = 200;
     this._sprite.position.y = 100;
@@ -103,7 +99,6 @@ export class Engine {
       false,
       new Float32Array(this._projection.data)
     );
-    debugger;
     this._sprite.draw(this._basicShader);
 
     requestAnimationFrame(this.loop.bind(this));
