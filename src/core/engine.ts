@@ -1,6 +1,9 @@
 import { AssetManager } from './assets/assetManager';
 import { gl, GLUtilities } from './gl/gl';
-import { Shader } from './gl/shader';
+import { BasicShader } from './gl/shaders/basicShader';
+import { Color } from './graphics/color';
+import { Material } from './graphics/material';
+import { MaterialManager } from './graphics/materialManager';
 import { Sprite } from './graphics/sprite';
 import { Matrix4x4 } from './math/matrix4x4';
 import { MessageBus } from './message/messageBus';
@@ -12,7 +15,7 @@ export class Engine {
   // @ts-ignore
   private _canvas: HTMLCanvasElement;
   // @ts-ignore
-  private _shader: Shader;
+  private _basicShader: BasicShader;
   // @ts-ignore
   private _sprite: Sprite;
   // @ts-ignore
@@ -32,12 +35,6 @@ export class Engine {
 
     gl.clearColor(0, 0, 0, 1);
 
-    this.loadShaders();
-    this._shader.use();
-
-    this._sprite = new Sprite('test', 'src/assets/textures/stone_wall.jpg');
-    this._sprite.load();
-
     let context = require.context(
       '../assets/textures/',
       true,
@@ -45,6 +42,24 @@ export class Engine {
     );
 
     this.loadAllImages(context);
+
+    this._basicShader = new BasicShader();
+    this._basicShader.use();
+
+    // Load materials
+    MaterialManager.registerMaterial(
+      new Material(
+        'stoneWall',
+        'src/assets/textures/stone_wall_128x128.jpg',
+        new Color(255, 128, 0, 0)
+      )
+    );
+
+    // Load
+    this._sprite = new Sprite('test', 'stoneWall');
+    this._sprite.load();
+    this._sprite.position.x = 200;
+    this._sprite.position.y = 100;
 
     this.resize();
     this.loop();
@@ -76,62 +91,18 @@ export class Engine {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     // Set uniforms
-    const colorPosition = this._shader.getUniformLocation('u_tint');
-    //gl.uniform4f(colorPosition, 1, 0.4, 1, 1);
-    gl.uniform4f(colorPosition, 1, 1, 1, 1);
 
-    const projectionPosition = this._shader.getUniformLocation('u_projection');
+    const projectionPosition =
+      this._basicShader.getUniformLocation('u_projection');
     gl.uniformMatrix4fv(
       projectionPosition,
       false,
       new Float32Array(this._projection.data)
     );
-
-    let modelLocation = this._shader.getUniformLocation('u_model');
-    gl.uniformMatrix4fv(
-      modelLocation,
-      false,
-      new Float32Array(Matrix4x4.translation(this._sprite.position).data)
-    );
-    this._sprite.draw(this._shader);
+    debugger;
+    this._sprite.draw(this._basicShader);
 
     requestAnimationFrame(this.loop.bind(this));
-  }
-
-  private loadShaders(): void {
-    const vertexShaderSource = `
-    attribute vec3 a_position;
-    attribute vec2 a_texCoord;
-
-    uniform mat4 u_projection;
-    uniform mat4 u_model;
-
-    varying vec2 v_texCoord;
-
-    void main() {
-      gl_Position = u_projection * u_model * vec4(a_position, 1.0);
-      v_texCoord = a_texCoord;
-    }
-    `;
-
-    let fragmentShaderSource = `
-    precision mediump float;
-
-    uniform vec4 u_tint;
-    uniform sampler2D u_diffuse;
-
-    varying vec2 v_texCoord;
-    
-    void main() {
-      gl_FragColor = u_tint * texture2D(u_diffuse, v_texCoord);
-    }
-    `;
-
-    this._shader = new Shader(
-      'basic',
-      vertexShaderSource,
-      fragmentShaderSource
-    );
   }
 
   private loadAllImages(requireContext: __WebpackModuleApi.RequireContext) {

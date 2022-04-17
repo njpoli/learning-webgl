@@ -21,7 +21,6 @@ export class TextureManager {
     } else {
       TextureManager._textures[textureName].referenceCount++;
     }
-
     return TextureManager._textures[textureName].texture;
   }
 
