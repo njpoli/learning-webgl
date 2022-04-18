@@ -1,7 +1,7 @@
 import { Material } from './material';
 
 class MaterialReferenceNode {
-  public material: Material;
+  public material: Material | undefined;
 
   public referenceCount: number = 1;
 
@@ -22,9 +22,8 @@ export class MaterialManager {
     }
   }
 
-  public static getMaterial(materialName: string): Material {
+  public static getMaterial(materialName: string): Material | undefined {
     if (MaterialManager._materials[materialName] === undefined) {
-      //@ts-ignore
       return undefined;
     } else {
       MaterialManager._materials[materialName].referenceCount++;
@@ -33,13 +32,16 @@ export class MaterialManager {
   }
 
   public static releaseMaterial(materialName: string): void {
-    if (!MaterialManager._materials[materialName]) {
+    const materialReference = MaterialManager._materials[materialName];
+    if (!materialReference) {
       console.warn('Cannot release a material which has not been registered');
     } else {
       MaterialManager._materials[materialName].referenceCount--;
-      if (MaterialManager._materials[materialName].referenceCount < 1) {
-        MaterialManager._materials[materialName].material.destroy();
-        // @ts-ignore
+      if (
+        MaterialManager._materials[materialName].referenceCount < 1 &&
+        MaterialManager._materials[materialName] !== undefined
+      ) {
+        MaterialManager._materials[materialName].material?.destroy();
         MaterialManager._materials[materialName].material = undefined;
         delete MaterialManager._materials[materialName];
       }

@@ -6,8 +6,7 @@ export class Material {
   private _name: string;
   private _diffuseTextureName: string;
 
-  // @ts-ignore
-  private _diffuseTexture: Texture;
+  private _diffuseTexture: Texture | undefined;
   private _tint: Color;
 
   public constructor(name: string, diffuseTextureName: string, tint: Color) {
@@ -27,11 +26,14 @@ export class Material {
   }
 
   public get diffuseTextureName(): string {
-    return this.diffuseTextureName;
+    return this._diffuseTextureName;
   }
 
-  public get diffuseTexture(): Texture {
-    return this.diffuseTexture;
+  public get diffuseTexture(): Texture | undefined {
+    if (!this._diffuseTexture) {
+      return undefined;
+    }
+    return this._diffuseTexture;
   }
 
   public get tint(): Color {
@@ -53,7 +55,6 @@ export class Material {
 
   public destroy(): void {
     TextureManager.releaseTexture(this._diffuseTextureName);
-    //@ts-ignore
     this._diffuseTexture = undefined;
   }
 }

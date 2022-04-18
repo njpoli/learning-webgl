@@ -10,9 +10,8 @@ export class Sprite {
   private _name: string;
   private _width: number;
   private _height: number;
-  // @ts-ignore
-  private _buffer: GLBuffer;
-  private _material: Material;
+  private _buffer: GLBuffer | undefined;
+  private _material: Material | undefined;
   private _materialName: string;
 
   public position: Vector3 = new Vector3();
@@ -27,7 +26,6 @@ export class Sprite {
     this._width = width;
     this._height = height;
     this._materialName = materialName;
-    //@ts-ignore
     this._material = MaterialManager.getMaterial(this._materialName);
   }
 
@@ -36,7 +34,9 @@ export class Sprite {
   }
 
   public destroy(): void {
-    this._buffer.destroy();
+    if (this._buffer) {
+      this._buffer.destroy();
+    }
     MaterialManager.releaseMaterial(this._materialName);
     // @ts-ignore
     this._material = undefined;
@@ -97,16 +97,23 @@ export class Sprite {
     );
 
     const colorLocation = shader.getUniformLocation('u_tint');
-    gl.uniform4fv(colorLocation, this._material.tint.toFloat32Array());
-
     if (this._material) {
+      gl.uniform4fv(colorLocation, this._material.tint.toFloat32Array());
+    }
+    //gl.uniform4f(colorLocation, 1, 1, 1, 0);
+
+    if (this._material?.diffuseTexture) {
       this._material.diffuseTexture.activateAndBind(0);
       const diffuseLocation = shader.getUniformLocation('u_diffuse');
       // pass a single integer
       gl.uniform1i(diffuseLocation, 0);
     }
 
-    this._buffer.bind();
-    this._buffer.draw();
+    if (this._buffer) {
+      this._buffer.bind();
+      this._buffer.draw();
+    } else {
+      throw new Error('No assigned buffer for sprite ' + this._name);
+    }
   }
 }
