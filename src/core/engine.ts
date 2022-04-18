@@ -47,7 +47,7 @@ export class Engine {
       new Material(
         'stoneWall',
         'src/assets/textures/stone_wall_128x128.jpg',
-        new Color(255, 128, 0, 0)
+        new Color(0, 255, 0, 255)
       )
     );
 
