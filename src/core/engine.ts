@@ -12,14 +12,10 @@ import { MessageBus } from './message/messageBus';
  * The main game engine class
  */
 export class Engine {
-  // @ts-ignore
-  private _canvas: HTMLCanvasElement;
-  // @ts-ignore
-  private _basicShader: BasicShader;
-  // @ts-ignore
-  private _sprite: Sprite;
-  // @ts-ignore
-  private _projection: Matrix4x4;
+  private _canvas: HTMLCanvasElement | undefined;
+  private _basicShader: BasicShader | undefined;
+  private _sprite: Sprite | undefined;
+  private _projection: Matrix4x4 | undefined;
 
   /**
    * Creates a new engine
@@ -91,16 +87,17 @@ export class Engine {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     // Set uniforms
+    if (this._basicShader && this._projection && this._sprite) {
+      const projectionPosition =
+        this._basicShader.getUniformLocation('u_projection');
 
-    const projectionPosition =
-      this._basicShader.getUniformLocation('u_projection');
-    gl.uniformMatrix4fv(
-      projectionPosition,
-      false,
-      new Float32Array(this._projection.data)
-    );
-    this._sprite.draw(this._basicShader);
-
+      gl.uniformMatrix4fv(
+        projectionPosition,
+        false,
+        new Float32Array(this._projection.data)
+      );
+      this._sprite.draw(this._basicShader);
+    }
     requestAnimationFrame(this.loop.bind(this));
   }
 

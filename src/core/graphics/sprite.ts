@@ -103,6 +103,7 @@ export class Sprite {
     //gl.uniform4f(colorLocation, 1, 1, 1, 0);
 
     if (this._material?.diffuseTexture) {
+      console.log(this._material.diffuseTexture);
       this._material.diffuseTexture.activateAndBind(0);
       const diffuseLocation = shader.getUniformLocation('u_diffuse');
       // pass a single integer
