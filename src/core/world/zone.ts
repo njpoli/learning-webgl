@@ -45,6 +45,8 @@ export class Zone {
     this._state = ZoneState.UPDATING;
   }
 
+  public unload(): void {}
+
   public update(time: number): void {
     if ((this._state = ZoneState.UPDATING)) {
       this._scene.update(time);
@@ -56,4 +58,8 @@ export class Zone {
       this._scene.render(shader);
     }
   }
+
+  public onActivated(): void {}
+
+  public onDeactivated(): void {}
 }

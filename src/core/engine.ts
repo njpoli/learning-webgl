@@ -7,6 +7,7 @@ import { MaterialManager } from './graphics/materialManager';
 import { Sprite } from './graphics/sprite';
 import { Matrix4x4 } from './math/matrix4x4';
 import { MessageBus } from './message/messageBus';
+import { ZoneManager } from './world/zoneManager';
 
 /**
  * The main game engine class
@@ -14,7 +15,6 @@ import { MessageBus } from './message/messageBus';
 export class Engine {
   private _canvas: HTMLCanvasElement | undefined;
   private _basicShader: BasicShader | undefined;
-  private _sprite: Sprite | undefined;
   private _projection: Matrix4x4 | undefined;
 
   /**
@@ -51,11 +51,9 @@ export class Engine {
       )
     );
 
+    const zoneId = ZoneManager.createTestZone();
     // Load
-    this._sprite = new Sprite('test', 'stoneWall');
-    this._sprite.load();
-    this._sprite.position.x = 200;
-    this._sprite.position.y = 100;
+    ZoneManager.changeZone(zoneId);
 
     this.resize();
     this.loop();
@@ -84,10 +82,16 @@ export class Engine {
 
   private loop(): void {
     MessageBus.update(0);
+
+    ZoneManager.update(0);
+
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+    if (this._basicShader) {
+      ZoneManager.render(this._basicShader);
+    }
     // Set uniforms
-    if (this._basicShader && this._projection && this._sprite) {
+    if (this._basicShader && this._projection) {
       const projectionPosition =
         this._basicShader.getUniformLocation('u_projection');
 
@@ -96,7 +100,6 @@ export class Engine {
         false,
         new Float32Array(this._projection.data)
       );
-      this._sprite.draw(this._basicShader);
     }
     requestAnimationFrame(this.loop.bind(this));
   }
