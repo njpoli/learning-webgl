@@ -1,13 +1,14 @@
 import { Shader } from '../gl/shader';
 import { Matrix4x4 } from '../math/matrix4x4';
 import { Transform } from '../math/transform';
+import { Scene } from './scene';
 
 export class SimObject {
   private _id: number;
   private _children: SimObject[] = [];
   private _parent: SimObject | undefined;
   private _isLoaded: boolean = false;
-  //  private _scene
+  private _scene: Scene | undefined;
 
   private _localMatrix: Matrix4x4 = Matrix4x4.identity();
   private _worldMatrix: Matrix4x4 = Matrix4x4.identity();
@@ -16,9 +17,10 @@ export class SimObject {
 
   public transform: Transform = new Transform();
 
-  public constructor(id: number, name: string) {
+  public constructor(id: number, name: string, scene?: Scene) {
     this._id = id;
     this.name = name;
+    this._scene = scene;
   }
 
   public get id(): number {
@@ -33,13 +35,16 @@ export class SimObject {
     return this._worldMatrix;
   }
 
-  private get isLoaded(): boolean {
+  public get isLoaded(): boolean {
     return this._isLoaded;
   }
 
   public addChild(child: SimObject): void {
     child._parent = this;
     this._children.push(child);
+    if (this._scene) {
+      child.onAdded(this._scene);
+    }
   }
 
   public removeChild(child: SimObject): void {
@@ -84,5 +89,9 @@ export class SimObject {
     for (let child of this._children) {
       child.render(shader);
     }
+  }
+
+  protected onAdded(scene: Scene): void {
+    this._scene = scene;
   }
 }
