@@ -14,8 +14,6 @@ export class Sprite {
   private _material: Material | undefined;
   private _materialName: string;
 
-  public position: Vector3 = new Vector3();
-
   public constructor(
     name: string,
     materialName: string,
@@ -88,19 +86,14 @@ export class Sprite {
 
   public update(time: number): void {}
 
-  public draw(shader: Shader): void {
+  public draw(shader: Shader, model: Matrix4x4): void {
     let modelLocation = shader.getUniformLocation('u_model');
-    gl.uniformMatrix4fv(
-      modelLocation,
-      false,
-      new Float32Array(Matrix4x4.translation(this.position).data)
-    );
+    gl.uniformMatrix4fv(modelLocation, false, model.toFloat32Array());
 
     const colorLocation = shader.getUniformLocation('u_tint');
     if (this._material) {
       gl.uniform4fv(colorLocation, this._material.tint.toFloat32Array());
     }
-    //gl.uniform4f(colorLocation, 1, 1, 1, 0);
 
     if (this._material?.diffuseTexture) {
       this._material.diffuseTexture.activateAndBind(0);

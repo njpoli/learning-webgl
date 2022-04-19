@@ -15,8 +15,11 @@ export class Transform {
   public getTransformationMatrix(): Matrix4x4 {
     let translation = Matrix4x4.translation(this.position);
 
-    // TODO: add x and y for 3D.
-    let rotation = Matrix4x4.rotationZ(this.rotation.z);
+    let rotation = Matrix4x4.rotationXYZ(
+      this.rotation.x,
+      this.rotation.y,
+      this.rotation.z
+    );
     let scale = Matrix4x4.scale(this.scale);
 
     // order matters here

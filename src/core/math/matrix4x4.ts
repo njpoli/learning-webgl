@@ -75,6 +75,38 @@ export class Matrix4x4 {
     return m;
   }
 
+  /**
+   * Creates a rotation matrix on the X axis from the provided angle in radians.
+   * @param angleInRadians The angle in radians.
+   */
+  public static rotationX(angleInRadians: number): Matrix4x4 {
+    let m = new Matrix4x4();
+
+    let c = Math.cos(angleInRadians);
+    let s = Math.sin(angleInRadians);
+
+    m._data[5] = c;
+    m._data[6] = s;
+    m._data[9] = -s;
+    m._data[10] = c;
+
+    return m;
+  }
+
+  public static rotationY(angleInRadians: number): Matrix4x4 {
+    let m = new Matrix4x4();
+
+    let c = Math.cos(angleInRadians);
+    let s = Math.sin(angleInRadians);
+
+    m._data[0] = c;
+    m._data[2] = -s;
+    m._data[8] = s;
+    m._data[10] = c;
+
+    return m;
+  }
+
   public static rotationZ(angleInRadians: number): Matrix4x4 {
     // radians are used in almost all math libraries because it is more performant
     // under the hood
@@ -86,10 +118,22 @@ export class Matrix4x4 {
 
     m._data[0] = c;
     m._data[1] = s;
-    m._data[5] = -s;
-    m._data[6] = c;
+    m._data[4] = -s;
+    m._data[5] = c;
 
     return m;
+  }
+
+  public static rotationXYZ(
+    xRadians: number,
+    yRadians: number,
+    zRadians: number
+  ): Matrix4x4 {
+    const rx = Matrix4x4.rotationX(xRadians);
+    const ry = Matrix4x4.rotationY(yRadians);
+    const rz = Matrix4x4.rotationZ(zRadians);
+
+    return Matrix4x4.multiply(Matrix4x4.multiply(rz, ry), rx);
   }
 
   public static scale(scale: Vector3): Matrix4x4 {
@@ -161,5 +205,11 @@ export class Matrix4x4 {
 
   public toFloat32Array(): Float32Array {
     return new Float32Array(this._data);
+  }
+
+  public copyFrom(m: Matrix4x4): void {
+    for (let i = 0; i < 16; i++) {
+      this._data[i] = m._data[i];
+    }
   }
 }

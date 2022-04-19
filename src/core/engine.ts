@@ -51,6 +51,14 @@ export class Engine {
       )
     );
 
+    MaterialManager.registerMaterial(
+      new Material(
+        'woodPlank',
+        'src/assets/textures/wood_plank_128x128.jpg',
+        new Color(155, 155, 255, 255)
+      )
+    );
+
     const zoneId = ZoneManager.createTestZone();
     // Load
     ZoneManager.changeZone(zoneId);
