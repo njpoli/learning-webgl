@@ -1,7 +1,6 @@
 import { gl } from '../gl/gl';
 import { AttributeInfo, GLBuffer } from '../gl/glBuffer';
 import { Shader } from '../gl/shader';
-import { Vector3 } from '../math/vector3';
 import { Matrix4x4 } from '../math/matrix4x4';
 import { MaterialManager } from './materialManager';
 import { Material } from './material';

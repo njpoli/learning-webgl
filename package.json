@@ -5,8 +5,7 @@
   "license": "MIT",
   "scripts": {
     "serve": "webpack serve --mode development",
-    "build": "webpack --mode production",
-    "dev": "tsc -w"
+    "build": "webpack --mode production"
   },
   "devDependencies": {
     "@types/webpack-env": "^1.16.4",

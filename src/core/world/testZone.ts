@@ -1,6 +1,4 @@
 import { SpriteComponent } from '../../components/spriteComponent';
-import { Shader } from '../gl/shader';
-import { Sprite } from '../graphics/sprite';
 import { SimObject } from './simObject';
 import { Zone } from './zone';
 
@@ -11,10 +9,6 @@ export class TestZone extends Zone {
   private _testSprite: SpriteComponent | undefined;
 
   public load(): void {
-    //this._sprite = new Sprite('test', 'stoneWall');
-    //this._sprite.load();
-    //this._sprite.position.x = 200;
-    //this._sprite.position.y = 100;
     this._parentObject = new SimObject(0, 'parentObject');
     this._parentSprite = new SpriteComponent('parentTest', 'woodPlank');
     this._parentObject.addComponent(this._parentSprite);
