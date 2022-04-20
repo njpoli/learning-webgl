@@ -26,6 +26,15 @@
                         "materialName": "woodPlank",
                         "type": "sprite"
                         }
+                    ],
+                    "behaviors": [
+                        {
+                            "name": "rotateX",
+                            "type": "rotation",
+                            "rotation": {
+                                "z": -0.02
+                            }
+                        }
                     ]
                 }
             ],
@@ -34,6 +43,15 @@
                 "name": "parentTest",
                 "materialName": "stoneWall",
                 "type": "sprite"
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "rotateX",
+                    "type": "rotation",
+                    "rotation": {
+                        "z": 0.01
+                    }
                 }
             ]
         }
