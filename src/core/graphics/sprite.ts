@@ -42,21 +42,18 @@ export class Sprite {
   }
 
   public load(): void {
-    this._buffer = new GLBuffer(5);
+    this._buffer = new GLBuffer();
 
     let positionAttribute = new AttributeInfo();
     // Removed reference to shader, bad practice to pass shader info to sprite on load
     // Still not ideal (referencing a_location in vertexShaderSource by hardcoding 0)
     // Each variable in shaderSource is referenced by index in order of declaration (e.g. because a_location is the first variable it is index 0)
     positionAttribute.location = 0;
-    positionAttribute.offset = 0;
     positionAttribute.size = 3;
     this._buffer.addAttributeLocation(positionAttribute);
 
     let texCoordAttribute = new AttributeInfo();
     texCoordAttribute.location = 1;
-    // matches the size of the postion attribute
-    texCoordAttribute.offset = 3;
     texCoordAttribute.size = 2;
     this._buffer.addAttributeLocation(texCoordAttribute);
     // prettier-ignore

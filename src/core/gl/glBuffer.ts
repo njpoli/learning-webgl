@@ -18,7 +18,7 @@ export class AttributeInfo {
    * The number of elements from the beginning of the buffer.
    */
   //@ts-ignore
-  public offset: number;
+  public offset: number = 0;
 }
 
 /**
@@ -27,7 +27,7 @@ export class AttributeInfo {
 export class GLBuffer {
   private _hasAttributeLocation: boolean = false;
   private _elementSize: number;
-  private _stride: number;
+  private _stride: number = 0;
   private _buffer: WebGLBuffer;
 
   private _targetBufferType: number;
@@ -37,20 +37,19 @@ export class GLBuffer {
 
   private _data: number[] = [];
   private _attributes: AttributeInfo[] = [];
+
   /**
    * Creates a new GL Buffer.
-   * @param elementSize The size of each element in the buffer.
    * @param dataType The data type of the buffer. Default: gl.FLOAT
    * @param targetBufferType The buffer target type. gl.ARRAY_BUFFER or gl.ELEMENT_ARRAY_BUFFER. Default: gl.ARRAY_BUFFER
    * @param mode The drawing mode of the buffer. (i.e. gl.TRIANGLES or gl.LINES). Default: gl.TRIANGLES
    */
   public constructor(
-    elementSize: number,
     dataType: number = gl.FLOAT,
     targetBufferType: number = gl.ARRAY_BUFFER,
     mode: number = gl.TRIANGLES
   ) {
-    this._elementSize = elementSize;
+    this._elementSize = 0;
     this._dataType = dataType;
     this._targetBufferType = targetBufferType;
     this._mode = mode;
@@ -76,7 +75,6 @@ export class GLBuffer {
     }
 
     // size of elements * number of bytes in each element
-    this._stride = this._elementSize * this._typeSize;
     this._buffer = gl.createBuffer() as WebGLBuffer;
   }
 
@@ -124,8 +122,10 @@ export class GLBuffer {
    */
   public addAttributeLocation(info: AttributeInfo): void {
     this._hasAttributeLocation = true;
-
+    info.offset = this._elementSize;
     this._attributes.push(info);
+    this._elementSize += info.size;
+    this._stride = this._elementSize * this._typeSize;
   }
 
   /**
