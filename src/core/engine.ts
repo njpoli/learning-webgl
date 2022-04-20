@@ -1,4 +1,8 @@
+import { ComponentManager } from '../components/componentManager';
+import { SpriteComponentBuilder } from '../components/spriteComponent';
 import { AssetManager } from './assets/assetManager';
+import { BehaviorManager } from './behaviors/behaviorManager';
+import { RotationBehaviorBuilder } from './behaviors/rotationBehavior';
 import { gl, GLUtilities } from './gl/gl';
 import { BasicShader } from './gl/shaders/basicShader';
 import { Color } from './graphics/color';
@@ -38,8 +42,8 @@ export class Engine {
     );
     let jsonContext = require.context('../assets/zones/', true, /\.(json)$/i);
 
-    this.loadAllImages(imageContext);
-    this.loadAllImages(jsonContext);
+    this.loadAll(imageContext);
+    this.loadAll(jsonContext);
 
     this._basicShader = new BasicShader();
     this._basicShader.use();
@@ -60,6 +64,10 @@ export class Engine {
         new Color(155, 155, 255, 255)
       )
     );
+
+    // Find a better place for this?
+    ComponentManager.registerBuilder(new SpriteComponentBuilder());
+    BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
 
     // TODO: Change this to be read from game config
     ZoneManager.changeZone(0);
@@ -113,7 +121,7 @@ export class Engine {
     requestAnimationFrame(this.loop.bind(this));
   }
 
-  private loadAllImages(requireContext: __WebpackModuleApi.RequireContext) {
+  private loadAll(requireContext: __WebpackModuleApi.RequireContext) {
     requireContext.keys().forEach(requireContext);
   }
 }

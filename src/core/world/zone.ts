@@ -1,3 +1,5 @@
+import { ComponentManager } from '../../components/componentManager';
+import { BehaviorManager } from '../behaviors/behaviorManager';
 import { Shader } from '../gl/shader';
 import { Scene } from './scene';
 import { SimObject } from './simObject';
@@ -45,9 +47,7 @@ export class Zone {
     }
 
     zoneData.objects.forEach((o: any) => {
-      let obj = zoneData.objects[o] as SimObject;
-
-      this.loadSimObject(obj, this._scene.root);
+      this.loadSimObject(o as SimObject, this._scene.root);
     });
   }
 
@@ -90,10 +90,23 @@ export class Zone {
       simObject.transform.setFromJson(dataSection.transform);
     }
 
+    if (dataSection.components) {
+      dataSection.components.forEach((c: any) => {
+        const component = ComponentManager.extractComponent(c);
+        simObject.addComponent(component);
+      });
+    }
+
+    if (dataSection.behaviors) {
+      dataSection.behaviors.forEach((b: any) => {
+        const behavior = BehaviorManager.extractBehavior(b);
+        simObject.addBehavior(behavior);
+      });
+    }
+
     if (dataSection.children && dataSection.children.length > 0) {
       dataSection.children.forEach((o: any) => {
-        let obj = dataSection.children[o];
-        this.loadSimObject(obj, simObject);
+        this.loadSimObject(o, simObject);
       });
     }
 

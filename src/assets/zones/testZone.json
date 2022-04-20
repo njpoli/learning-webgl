@@ -19,6 +19,38 @@
                             "x": 100,
                             "y": 100
                         }
+                    },
+                    "components": [
+                        {
+                        "name": "testObject",
+                        "materialName": "woodPlank",
+                        "type": "sprite"
+                        }
+                    ],
+                    "behaviors": [
+                        {
+                            "name": "rotateX",
+                            "type": "rotation",
+                            "rotation": {
+                                "z": -0.02
+                            }
+                        }
+                    ]
+                }
+            ],
+            "components": [
+                {
+                "name": "parentTest",
+                "materialName": "stoneWall",
+                "type": "sprite"
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "rotateX",
+                    "type": "rotation",
+                    "rotation": {
+                        "z": 0.01
                     }
                 }
             ]

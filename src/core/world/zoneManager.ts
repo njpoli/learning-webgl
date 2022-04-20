@@ -61,7 +61,7 @@ export class ZoneManager implements IMessageHandler {
   }
 
   public onMessage(message: Message): void {
-    if (message.code.indexOf(MESSAGE_ASSET_LOADER_ASSET_LOADED)) {
+    if (message.code.indexOf(MESSAGE_ASSET_LOADER_ASSET_LOADED) !== -1) {
       let asset = message.context as JsonAsset;
       ZoneManager.loadZone(asset);
     }
@@ -71,7 +71,7 @@ export class ZoneManager implements IMessageHandler {
     const zoneData = asset.data;
     let zoneId: number;
     if (typeof zoneData === 'object' && zoneData) {
-      if (!zoneData.id) {
+      if (zoneData.id === undefined) {
         throw new Error('Zone file format exception: Zone id not present');
       } else {
         zoneId = Number(zoneData.id);

@@ -19,7 +19,21 @@
                             "x": 100,
                             "y": 100
                         }
-                    }
+                    },
+                    "components": [
+                        {
+                        "name": "testObject",
+                        "materialName": "woodPlank",
+                        "type": "sprite"
+                        }
+                    ]
+                }
+            ],
+            "components": [
+                {
+                "name": "parentTest",
+                "materialName": "stoneWall",
+                "type": "sprite"
                 }
             ]
         }

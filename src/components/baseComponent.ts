@@ -1,13 +1,17 @@
 import { Shader } from '../core/gl/shader';
 import { SimObject } from '../core/world/simObject';
+import { IComponent } from './IComponent';
+import { IComponentData } from './IComponentData';
 
-export abstract class BaseComponent {
+export abstract class BaseComponent implements IComponent {
   protected _owner: SimObject | undefined;
+  protected _data: IComponentData;
 
   public name: string;
 
-  public constructor(name: string) {
-    this.name = name;
+  public constructor(data: IComponentData) {
+    this._data = data;
+    this.name = data.name;
   }
 
   public get owner(): SimObject | undefined {

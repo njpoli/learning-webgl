@@ -1,4 +1,6 @@
 import { BaseComponent } from '../../components/baseComponent';
+import { IComponent } from '../../components/IComponent';
+import { IBehavior } from '../behaviors/IBehavior';
 import { Shader } from '../gl/shader';
 import { Matrix4x4 } from '../math/matrix4x4';
 import { Transform } from '../math/transform';
@@ -10,7 +12,8 @@ export class SimObject {
   private _parent: SimObject | undefined;
   private _isLoaded: boolean = false;
   private _scene: Scene | undefined;
-  private _components: BaseComponent[] = [];
+  private _components: IComponent[] = [];
+  private _behaviors: IBehavior[] = [];
 
   private _localMatrix: Matrix4x4 = Matrix4x4.identity();
   private _worldMatrix: Matrix4x4 = Matrix4x4.identity();
@@ -73,9 +76,14 @@ export class SimObject {
     return undefined;
   }
 
-  public addComponent(component: BaseComponent): void {
+  public addComponent(component: IComponent): void {
     this._components.push(component);
     component.setOwner(this);
+  }
+
+  public addBehavior(behavior: IBehavior): void {
+    this._behaviors.push(behavior);
+    behavior.setOwner(this);
   }
 
   public load(): void {
@@ -98,6 +106,10 @@ export class SimObject {
 
     this._components.forEach((component) => {
       component.update(time);
+    });
+
+    this._behaviors.forEach((behavior) => {
+      behavior.update(time);
     });
 
     for (let child of this._children) {
