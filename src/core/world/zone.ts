@@ -1,5 +1,6 @@
 import { Shader } from '../gl/shader';
 import { Scene } from './scene';
+import { SimObject } from './simObject';
 
 export enum ZoneState {
   UNINITIALIZED,
@@ -13,6 +14,7 @@ export class Zone {
   private _description: string;
   private _scene: Scene;
   private _state: ZoneState = ZoneState.UNINITIALIZED;
+  private _globalId: number = -1;
 
   public constructor(id: number, name: string, description: string) {
     this._id = id;
@@ -35,6 +37,18 @@ export class Zone {
 
   public get scene(): Scene {
     return this._scene;
+  }
+
+  public initialize(zoneData: any): void {
+    if (zoneData.objects === undefined) {
+      throw new Error('Zone initialization error: objects not present');
+    }
+
+    zoneData.objects.forEach((o: any) => {
+      let obj = zoneData.objects[o] as SimObject;
+
+      this.loadSimObject(obj, this._scene.root);
+    });
   }
 
   public load(): void {
@@ -62,4 +76,29 @@ export class Zone {
   public onActivated(): void {}
 
   public onDeactivated(): void {}
+
+  private loadSimObject(dataSection: any, parent: SimObject | undefined): void {
+    let name: string = '';
+    if (dataSection.name !== undefined) {
+      name = String(dataSection.name);
+    }
+
+    this._globalId++;
+    let simObject = new SimObject(this._globalId, name, this._scene);
+
+    if (dataSection.transform !== undefined) {
+      simObject.transform.setFromJson(dataSection.transform);
+    }
+
+    if (dataSection.children && dataSection.children.length > 0) {
+      dataSection.children.forEach((o: any) => {
+        let obj = dataSection.children[o];
+        this.loadSimObject(obj, simObject);
+      });
+    }
+
+    if (parent !== undefined) {
+      parent.addChild(simObject);
+    }
+  }
 }

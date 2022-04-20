@@ -26,4 +26,18 @@ export class Transform {
     // T * R * S
     return Matrix4x4.multiply(Matrix4x4.multiply(translation, rotation), scale);
   }
+
+  public setFromJson(json: any): void {
+    if (json.position) {
+      this.position.setFromJson(json.position);
+    }
+
+    if (json.rotation) {
+      this.rotation.setFromJson(json.rotation);
+    }
+
+    if (json.scale) {
+      this.scale.setFromJson(json.scale);
+    }
+  }
 }

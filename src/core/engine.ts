@@ -27,16 +27,19 @@ export class Engine {
   public start(): void {
     this._canvas = GLUtilities.initialize();
     AssetManager.initialize();
+    ZoneManager.initialize();
 
     gl.clearColor(0, 0, 0, 1);
 
-    let context = require.context(
+    let imageContext = require.context(
       '../assets/textures/',
       true,
       /\.(png|svg|jpg|jpeg|gif)$/i
     );
+    let jsonContext = require.context('../assets/zones/', true, /\.(json)$/i);
 
-    this.loadAllImages(context);
+    this.loadAllImages(imageContext);
+    this.loadAllImages(jsonContext);
 
     this._basicShader = new BasicShader();
     this._basicShader.use();
@@ -58,9 +61,8 @@ export class Engine {
       )
     );
 
-    const zoneId = ZoneManager.createTestZone();
-    // Load
-    ZoneManager.changeZone(zoneId);
+    // TODO: Change this to be read from game config
+    ZoneManager.changeZone(0);
 
     this.resize();
     this.loop();

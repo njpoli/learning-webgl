@@ -5,17 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "node",
-            "name": "Launch via yarn",
-            "port": 3000,
-            "request": "launch",
-            "runtimeExecutable": "yarn",
-            "cwd": "${workspaceFolder}",
-            "runtimeArgs": [
-                "serve"
-            ]
-        },
-        {
             "type": "pwa-chrome",
             "request": "launch",
             "name": "Debug webpack dev server",

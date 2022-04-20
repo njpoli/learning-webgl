@@ -54,4 +54,16 @@ export class Vector3 {
     this._y = vector._y;
     this._z = vector._z;
   }
+
+  public setFromJson(json: any): void {
+    if (json.x) {
+      this._x = Number(json.x);
+    }
+    if (json.y) {
+      this._y = Number(json.y);
+    }
+    if (json.z) {
+      this._z = Number(json.z);
+    }
+  }
 }
