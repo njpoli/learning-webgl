@@ -52,16 +52,16 @@ export class Engine {
     MaterialManager.registerMaterial(
       new Material(
         'stoneWall',
-        'src/assets/textures/stone_wall_128x128.jpg',
-        new Color(155, 155, 255, 255)
+        'src/assets/textures/stone_wall.jpg',
+        Color.white()
       )
     );
 
     MaterialManager.registerMaterial(
       new Material(
         'woodPlank',
-        'src/assets/textures/wood_plank_128x128.jpg',
-        new Color(155, 155, 255, 255)
+        'src/assets/textures/wood_plank.jpg',
+        Color.white()
       )
     );
 
