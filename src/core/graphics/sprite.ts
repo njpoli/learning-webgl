@@ -78,8 +78,7 @@ export class Sprite {
     ];
 
     this._vertices.forEach((v) => {
-      // Not sure about this?
-      this._buffer && this._buffer.pushBackData(v.toArray());
+      this._buffer?.pushBackData(v.toArray());
     });
     this._buffer.upload();
     this._buffer.unbind();

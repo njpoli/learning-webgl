@@ -1,3 +1,4 @@
+import { AnimatedSpriteComponentBuilder } from '../components/animatedSpriteComponent';
 import { ComponentManager } from '../components/componentManager';
 import { SpriteComponentBuilder } from '../components/spriteComponent';
 import { AssetManager } from './assets/assetManager';
@@ -19,6 +20,7 @@ export class Engine {
   private _canvas: HTMLCanvasElement | undefined;
   private _basicShader: BasicShader | undefined;
   private _projection: Matrix4x4 | undefined;
+  private _previousTime: number = 0;
 
   /**
    * Creates a new engine
@@ -33,7 +35,9 @@ export class Engine {
     AssetManager.initialize();
     ZoneManager.initialize();
 
-    gl.clearColor(0, 0, 0, 1);
+    gl.clearColor(0, 0, 0.3, 1);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     let imageContext = require.context(
       '../assets/textures/',
@@ -65,8 +69,13 @@ export class Engine {
       )
     );
 
+    MaterialManager.registerMaterial(
+      new Material('bird', 'src/assets/textures/bird.png', Color.white())
+    );
+
     // Find a better place for this?
     ComponentManager.registerBuilder(new SpriteComponentBuilder());
+    ComponentManager.registerBuilder(new AnimatedSpriteComponentBuilder());
     BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
 
     // TODO: Change this to be read from game config
@@ -98,10 +107,25 @@ export class Engine {
   }
 
   private loop(): void {
-    MessageBus.update(0);
+    this.update();
+    this.render();
+  }
 
-    ZoneManager.update(0);
+  private loadAll(requireContext: __WebpackModuleApi.RequireContext) {
+    requireContext.keys().forEach(requireContext);
+  }
 
+  private update(): void {
+    let delta = performance.now() - this._previousTime;
+
+    MessageBus.update(delta);
+
+    ZoneManager.update(delta);
+
+    this._previousTime = performance.now();
+  }
+
+  private render(): void {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     if (this._basicShader) {
@@ -119,9 +143,5 @@ export class Engine {
       );
     }
     requestAnimationFrame(this.loop.bind(this));
-  }
-
-  private loadAll(requireContext: __WebpackModuleApi.RequireContext) {
-    requireContext.keys().forEach(requireContext);
   }
 }
