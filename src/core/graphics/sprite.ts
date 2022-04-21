@@ -4,14 +4,16 @@ import { Shader } from '../gl/shader';
 import { Matrix4x4 } from '../math/matrix4x4';
 import { MaterialManager } from './materialManager';
 import { Material } from './material';
+import { Vertex } from './vertex';
 
 export class Sprite {
-  private _name: string;
-  private _width: number;
-  private _height: number;
-  private _buffer: GLBuffer | undefined;
-  private _material: Material | undefined;
-  private _materialName: string;
+  protected _name: string;
+  protected _width: number;
+  protected _height: number;
+  protected _buffer: GLBuffer | undefined;
+  protected _material: Material | undefined;
+  protected _materialName: string;
+  protected _vertices: Vertex[] = [];
 
   public constructor(
     name: string,
@@ -57,25 +59,28 @@ export class Sprite {
     texCoordAttribute.size = 2;
     this._buffer.addAttributeLocation(texCoordAttribute);
     // prettier-ignore
-    const vertices = [
+    this._vertices = [
       // x, y, z, U: texture x, V: texture y
       // triangle 1
       // point 1
-      0, 0, 0, 0, 0,
+      new Vertex(0, 0, 0, 0, 0,),
       // point 2
-      0, this._height, 0, 0, 1.0,
+      new Vertex(0, this._height, 0, 0, 1.0,),
       // point 3
-      this._width, this._height, 0, 1.0, 1.0,
+      new Vertex(this._width, this._height, 0, 1.0, 1.0,),
       // triangle 2
       // point 4
-      this._width, this._height, 0, 1.0, 1.0,
+      new Vertex(this._width, this._height, 0, 1.0, 1.0),
       // point 5
-      this._width, 0, 0, 1.0, 0,
+      new Vertex(this._width, 0, 0, 1.0, 0),
       // point 6
-      0, 0, 0, 0, 0,
+      new Vertex(0, 0, 0, 0, 0),
     ];
 
-    this._buffer.pushBackData(vertices);
+    this._vertices.forEach((v) => {
+      // Not sure about this?
+      this._buffer && this._buffer.pushBackData(v.toArray());
+    });
     this._buffer.upload();
     this._buffer.unbind();
   }
