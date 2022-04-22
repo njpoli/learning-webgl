@@ -11,3 +11,8 @@ window.onload = function () {
 window.onresize = function () {
   engine.resize();
 };
+
+window.oncontextmenu = function (event) {
+  event.preventDefault();
+  event.stopPropagation();
+};

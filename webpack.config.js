@@ -44,7 +44,7 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|json)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|json|wav|mp3)$/i,
         type: 'asset/resource',
       },
     ],

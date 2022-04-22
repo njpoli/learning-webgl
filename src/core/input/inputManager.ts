@@ -76,9 +76,9 @@ export class InputManager {
 
   private static onMouseDown(event: MouseEvent): void {
     if (event.button === 0) {
-      this._leftDown = true;
+      InputManager._leftDown = true;
     } else if (event.button === 2) {
-      this._rightDown = true;
+      InputManager._rightDown = true;
     }
 
     Message.send(
@@ -94,9 +94,9 @@ export class InputManager {
 
   private static onMouseUp(event: MouseEvent): void {
     if (event.button === 0) {
-      this._leftDown = false;
+      InputManager._leftDown = false;
     } else if (event.button === 2) {
-      this._rightDown = false;
+      InputManager._rightDown = false;
     }
 
     Message.send(

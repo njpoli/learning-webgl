@@ -2,6 +2,7 @@ import { AnimatedSpriteComponentBuilder } from '../components/animatedSpriteComp
 import { ComponentManager } from '../components/componentManager';
 import { SpriteComponentBuilder } from '../components/spriteComponent';
 import { AssetManager } from './assets/assetManager';
+import { AudioManager } from './audio/audioManager';
 import { BehaviorManager } from './behaviors/behaviorManager';
 import { KeyboardMovementBehaviorBuilder } from './behaviors/keyboardMovementBehavior';
 import { RotationBehaviorBuilder } from './behaviors/rotationBehavior';
@@ -10,15 +11,17 @@ import { BasicShader } from './gl/shaders/basicShader';
 import { Color } from './graphics/color';
 import { Material } from './graphics/material';
 import { MaterialManager } from './graphics/materialManager';
-import { InputManager } from './input/inputManager';
+import { InputManager, MouseContext } from './input/inputManager';
 import { Matrix4x4 } from './math/matrix4x4';
+import { IMessageHandler } from './message/IMessageHandler';
+import { Message } from './message/message';
 import { MessageBus } from './message/messageBus';
 import { ZoneManager } from './world/zoneManager';
 
 /**
  * The main game engine class
  */
-export class Engine {
+export class Engine implements IMessageHandler {
   private _canvas: HTMLCanvasElement | undefined;
   private _basicShader: BasicShader | undefined;
   private _projection: Matrix4x4 | undefined;
@@ -38,6 +41,8 @@ export class Engine {
     InputManager.initialize();
     ZoneManager.initialize();
 
+    Message.subscribe('MOUSE_DOWN', this);
+
     gl.clearColor(0, 0, 0.3, 1);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -48,9 +53,15 @@ export class Engine {
       /\.(png|svg|jpg|jpeg|gif)$/i
     );
     let jsonContext = require.context('../assets/zones/', true, /\.(json)$/i);
+    let audioContext = require.context(
+      '../assets/sounds/',
+      true,
+      /\.(wav|mp3)$/i
+    );
 
     this.loadAll(imageContext);
     this.loadAll(jsonContext);
+    this.loadAll(audioContext);
 
     this._basicShader = new BasicShader();
     this._basicShader.use();
@@ -74,6 +85,18 @@ export class Engine {
 
     MaterialManager.registerMaterial(
       new Material('bird', 'src/assets/textures/bird.png', Color.white())
+    );
+
+    AudioManager.loadSoundFile(
+      'birdJump',
+      'src/assets/sounds/bird_jump.wav',
+      false
+    );
+
+    AudioManager.loadSoundFile(
+      'music',
+      'src/assets/sounds/alf_remix.mp3',
+      true
     );
 
     // Find a better place for this?
@@ -113,6 +136,18 @@ export class Engine {
   private loop(): void {
     this.update();
     this.render();
+  }
+
+  public onMessage(message: Message): void {
+    const mouseContext = message.context as MouseContext;
+    if (message.code === 'MOUSE_DOWN' && mouseContext) {
+      console.log(mouseContext);
+      if (mouseContext.leftDown) {
+        AudioManager.playSound('birdJump');
+      } else if (mouseContext.rightDown) {
+        AudioManager.toggleSound('music');
+      }
+    }
   }
 
   private loadAll(requireContext: __WebpackModuleApi.RequireContext) {
