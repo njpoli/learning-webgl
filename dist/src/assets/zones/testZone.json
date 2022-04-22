@@ -25,6 +25,13 @@
                     "frameCount": 4,
                     "frameSequence": [0,1,2,1]
                 }
+            ],
+            "behaviors": [
+                {
+                    "name": "movementBehavior",
+                    "type": "keyboardMovement",
+                    "speed": 3.5
+                }
             ]
         },
         {
