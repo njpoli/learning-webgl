@@ -53,6 +53,15 @@ export class Vector3 {
     }
   }
 
+  /**
+   * Checks if the vector is equal to the one passed as an argument
+   * @param v Vector to check against
+   * @returns Boolean baased on equivalency
+   */
+  public equals(v: Vector3): boolean {
+    return this._x === v._x && this._y === v._y && this._z === v._z;
+  }
+
   public toArray(): number[] {
     return [this._x, this._y, this._z];
   }
@@ -65,6 +74,11 @@ export class Vector3 {
     this._x = vector._x;
     this._y = vector._y;
     this._z = vector._z;
+  }
+
+  public static distance(a: Vector3, b: Vector3): number {
+    const diff = a.subtract(b);
+    return Math.sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
   }
 
   public setFromJson(json: any): void {

@@ -15,7 +15,7 @@ export class Sprite {
   protected _material: Material | undefined;
   protected _materialName: string;
   protected _vertices: Vertex[] = [];
-  protected _origin: Vector3 = new Vector3(0.5, 0.5, 0);
+  protected _origin: Vector3 = Vector3.zero;
 
   public constructor(
     name: string,

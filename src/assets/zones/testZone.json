@@ -55,7 +55,11 @@
                         {
                         "name": "testObject",
                         "materialName": "woodPlank",
-                        "type": "sprite"
+                        "type": "sprite",
+                        "origin": {
+                            "x": 0.5,
+                            "y": 0.5
+                            }
                         }
                     ],
                     "behaviors": [
@@ -73,7 +77,11 @@
                 {
                 "name": "parentTest",
                 "materialName": "stoneWall",
-                "type": "sprite"
+                "type": "sprite",
+                "origin": {
+                    "x": 0.5,
+                    "y": 0.5
+                    }
                 }
             ],
             "behaviors": [
