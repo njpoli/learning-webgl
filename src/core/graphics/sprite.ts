@@ -5,6 +5,7 @@ import { Matrix4x4 } from '../math/matrix4x4';
 import { MaterialManager } from './materialManager';
 import { Material } from './material';
 import { Vertex } from './vertex';
+import { Vector3 } from '../math/vector3';
 
 export class Sprite {
   protected _name: string;
@@ -14,6 +15,7 @@ export class Sprite {
   protected _material: Material | undefined;
   protected _materialName: string;
   protected _vertices: Vertex[] = [];
+  protected _origin: Vector3 = new Vector3(0.5, 0.5, 0);
 
   public constructor(
     name: string,
@@ -30,6 +32,14 @@ export class Sprite {
 
   public get name(): string {
     return this._name;
+  }
+
+  public get origin(): Vector3 {
+    return this._origin;
+  }
+
+  public set origin(value: Vector3) {
+    this._origin = value;
   }
 
   public destroy(): void {
@@ -58,23 +68,30 @@ export class Sprite {
     texCoordAttribute.location = 1;
     texCoordAttribute.size = 2;
     this._buffer.addAttributeLocation(texCoordAttribute);
+
+    const minX = -(this._width * this._origin.x);
+    const maxX = this._width * (1.0 - this._origin.x);
+
+    const minY = -(this._width * this._origin.y);
+    const maxY = this._width * (1.0 - this._origin.y);
+
     // prettier-ignore
     this._vertices = [
       // x, y, z, U: texture x, V: texture y
       // triangle 1
       // point 1
-      new Vertex(0, 0, 0, 0, 0,),
+      new Vertex(minX, minY, 0, 0, 0,),
       // point 2
-      new Vertex(0, this._height, 0, 0, 1.0,),
+      new Vertex(minX, maxY, 0, 0, 1.0,),
       // point 3
-      new Vertex(this._width, this._height, 0, 1.0, 1.0,),
+      new Vertex(maxX, maxY, 0, 1.0, 1.0,),
       // triangle 2
       // point 4
-      new Vertex(this._width, this._height, 0, 1.0, 1.0),
+      new Vertex(maxX, maxY, 0, 1.0, 1.0),
       // point 5
-      new Vertex(this._width, 0, 0, 1.0, 0),
+      new Vertex(maxX, minY, 0, 1.0, 0),
       // point 6
-      new Vertex(0, 0, 0, 0, 0),
+      new Vertex(minX, minY, 0, 0, 0),
     ];
 
     this._vertices.forEach((v) => {
