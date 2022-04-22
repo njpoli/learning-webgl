@@ -3,12 +3,14 @@ import { ComponentManager } from '../components/componentManager';
 import { SpriteComponentBuilder } from '../components/spriteComponent';
 import { AssetManager } from './assets/assetManager';
 import { BehaviorManager } from './behaviors/behaviorManager';
+import { KeyboardMovementBehaviorBuilder } from './behaviors/keyboardMovementBehavior';
 import { RotationBehaviorBuilder } from './behaviors/rotationBehavior';
 import { gl, GLUtilities } from './gl/gl';
 import { BasicShader } from './gl/shaders/basicShader';
 import { Color } from './graphics/color';
 import { Material } from './graphics/material';
 import { MaterialManager } from './graphics/materialManager';
+import { InputManager } from './input/inputManager';
 import { Matrix4x4 } from './math/matrix4x4';
 import { MessageBus } from './message/messageBus';
 import { ZoneManager } from './world/zoneManager';
@@ -33,6 +35,7 @@ export class Engine {
   public start(): void {
     this._canvas = GLUtilities.initialize();
     AssetManager.initialize();
+    InputManager.initialize();
     ZoneManager.initialize();
 
     gl.clearColor(0, 0, 0.3, 1);
@@ -77,6 +80,7 @@ export class Engine {
     ComponentManager.registerBuilder(new SpriteComponentBuilder());
     ComponentManager.registerBuilder(new AnimatedSpriteComponentBuilder());
     BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
+    BehaviorManager.registerBuilder(new KeyboardMovementBehaviorBuilder());
 
     // TODO: Change this to be read from game config
     ZoneManager.changeZone(0);
