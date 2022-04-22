@@ -40,6 +40,7 @@ export class Sprite {
 
   public set origin(value: Vector3) {
     this._origin = value;
+    this.recalculateVertices();
   }
 
   public destroy(): void {
@@ -69,6 +70,36 @@ export class Sprite {
     texCoordAttribute.size = 2;
     this._buffer.addAttributeLocation(texCoordAttribute);
 
+    this.calculateVertices();
+  }
+
+  public update(time: number): void {}
+
+  public draw(shader: Shader, model: Matrix4x4): void {
+    let modelLocation = shader.getUniformLocation('u_model');
+    gl.uniformMatrix4fv(modelLocation, false, model.toFloat32Array());
+
+    const colorLocation = shader.getUniformLocation('u_tint');
+    if (this._material) {
+      gl.uniform4fv(colorLocation, this._material.tint.toFloat32Array());
+    }
+
+    if (this._material?.diffuseTexture) {
+      this._material.diffuseTexture.activateAndBind(0);
+      const diffuseLocation = shader.getUniformLocation('u_diffuse');
+      // pass a single integer
+      gl.uniform1i(diffuseLocation, 0);
+    }
+
+    if (this._buffer) {
+      this._buffer.bind();
+      this._buffer.draw();
+    } else {
+      throw new Error('No assigned buffer for sprite ' + this._name);
+    }
+  }
+
+  protected calculateVertices(): void {
     const minX = -(this._width * this._origin.x);
     const maxX = this._width * (1.0 - this._origin.x);
 
@@ -97,33 +128,32 @@ export class Sprite {
     this._vertices.forEach((v) => {
       this._buffer?.pushBackData(v.toArray());
     });
-    this._buffer.upload();
-    this._buffer.unbind();
+
+    this._buffer?.upload();
+    this._buffer?.unbind();
   }
 
-  public update(time: number): void {}
+  protected recalculateVertices(): void {
+    const minX = -(this._width * this._origin.x);
+    const maxX = this._width * (1.0 - this._origin.x);
 
-  public draw(shader: Shader, model: Matrix4x4): void {
-    let modelLocation = shader.getUniformLocation('u_model');
-    gl.uniformMatrix4fv(modelLocation, false, model.toFloat32Array());
+    const minY = -(this._width * this._origin.y);
+    const maxY = this._width * (1.0 - this._origin.y);
 
-    const colorLocation = shader.getUniformLocation('u_tint');
-    if (this._material) {
-      gl.uniform4fv(colorLocation, this._material.tint.toFloat32Array());
-    }
+    this._vertices[0]?.position.set(minX, minY);
+    this._vertices[1]?.position.set(minX, maxY);
+    this._vertices[2]?.position.set(maxX, maxY);
 
-    if (this._material?.diffuseTexture) {
-      this._material.diffuseTexture.activateAndBind(0);
-      const diffuseLocation = shader.getUniformLocation('u_diffuse');
-      // pass a single integer
-      gl.uniform1i(diffuseLocation, 0);
-    }
+    this._vertices[3]?.position.set(maxX, maxY);
+    this._vertices[4]?.position.set(maxX, minY);
+    this._vertices[5]?.position.set(minX, minY);
+    this._buffer?.clearData();
 
-    if (this._buffer) {
-      this._buffer.bind();
-      this._buffer.draw();
-    } else {
-      throw new Error('No assigned buffer for sprite ' + this._name);
-    }
+    this._vertices.forEach((v) => {
+      this._buffer?.pushBackData(v.toArray());
+    });
+
+    this._buffer?.upload();
+    this._buffer?.unbind();
   }
 }

@@ -141,7 +141,6 @@ export class Engine implements IMessageHandler {
   public onMessage(message: Message): void {
     const mouseContext = message.context as MouseContext;
     if (message.code === 'MOUSE_DOWN' && mouseContext) {
-      console.log(mouseContext);
       if (mouseContext.leftDown) {
         AudioManager.playSound('birdJump');
       } else if (mouseContext.rightDown) {

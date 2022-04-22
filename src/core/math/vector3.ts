@@ -41,6 +41,18 @@ export class Vector3 {
     return new Vector3(1, 1, 1);
   }
 
+  public set(x?: number, y?: number, z?: number): void {
+    if (x) {
+      this._x = x;
+    }
+    if (y) {
+      this._y = y;
+    }
+    if (z) {
+      this._z = z;
+    }
+  }
+
   public toArray(): number[] {
     return [this._x, this._y, this._z];
   }
