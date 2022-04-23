@@ -1,17 +1,16 @@
 import { Shader } from '../core/gl/shader';
-import { Sprite } from '../core/graphics/sprite';
 import { BaseComponent } from './baseComponent';
 import { IComponent } from './IComponent';
 import { IComponentBuilder } from './IComponentBuilder';
 import { IComponentData } from './IComponentData';
-import { Vector3 } from '../core/math/vector3';
 import { IShape2D } from '../core/graphics/shapes2D/IShape2D';
 import { Rectangle2D } from '../core/graphics/shapes2D/rectangle2d';
 import { Circle2D } from '../core/graphics/shapes2D/circle2D';
+import { CollisionManager } from '../collision/collisionManager';
 
 export class CollisionComponentData implements IComponentData {
   public name: string = '';
-  public shape: IShape2D;
+  public shape: IShape2D | undefined;
 
   public setFromJson(json: any): void {
     if (json.name) {
@@ -57,11 +56,37 @@ export class CollisionComponent extends BaseComponent {
   public constructor(data: CollisionComponentData) {
     super(data);
 
+    if (!data.shape) {
+      throw new Error('Data is missing "shape" property:');
+    }
     this._shape = data.shape;
   }
 
   public get shape(): IShape2D {
     return this._shape;
+  }
+
+  public load(): void {
+    super.load();
+
+    if (this._owner) {
+      this._shape.position.copyFrom(
+        this._owner.transform.position.toVector2().add(this._shape.offset)
+      );
+    }
+
+    // Tell the collision manager that we exist.
+    CollisionManager.registerCollisionComponent(this);
+  }
+
+  public update(time: number): void {
+    if (this._owner) {
+      this._shape.position.copyFrom(
+        this._owner.transform.position.toVector2().add(this._shape.offset)
+      );
+    }
+
+    super.update(time);
   }
 
   public render(shader: Shader): void {
@@ -70,5 +95,15 @@ export class CollisionComponent extends BaseComponent {
     //}
 
     super.render(shader);
+  }
+
+  public onCollisionEntry(other: CollisionComponent): void {
+    console.log('onCollisionEntry:', this, other);
+  }
+  public onCollisionUpdate(other: CollisionComponent): void {
+    console.log('onCollisionUpdate', this, other);
+  }
+  public onCollisionExit(other: CollisionComponent): void {
+    console.log('onCollisionExit', this, other);
   }
 }

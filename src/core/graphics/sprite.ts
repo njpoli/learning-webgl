@@ -104,7 +104,7 @@ export class Sprite {
     const maxX = this._width * (1.0 - this._origin.x);
 
     const minY = -(this._width * this._origin.y);
-    const maxY = this._width * (1.0 - this._origin.y);
+    const maxY = this._height * (1.0 - this._origin.y);
 
     // prettier-ignore
     this._vertices = [
@@ -137,8 +137,8 @@ export class Sprite {
     const minX = -(this._width * this._origin.x);
     const maxX = this._width * (1.0 - this._origin.x);
 
-    const minY = -(this._width * this._origin.y);
-    const maxY = this._width * (1.0 - this._origin.y);
+    const minY = -(this._height * this._origin.y);
+    const maxY = this._height * (1.0 - this._origin.y);
 
     this._vertices[0]?.position.set(minX, minY);
     this._vertices[1]?.position.set(minX, maxY);

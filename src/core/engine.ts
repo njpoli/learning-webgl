@@ -1,4 +1,6 @@
+import { CollisionManager } from '../collision/collisionManager';
 import { AnimatedSpriteComponentBuilder } from '../components/animatedSpriteComponent';
+import { CollisionComponentBuilder } from '../components/collisionComponent';
 import { ComponentManager } from '../components/componentManager';
 import { SpriteComponentBuilder } from '../components/spriteComponent';
 import { AssetManager } from './assets/assetManager';
@@ -84,7 +86,11 @@ export class Engine implements IMessageHandler {
     );
 
     MaterialManager.registerMaterial(
-      new Material('bird', 'src/assets/textures/bird.png', Color.white())
+      new Material(
+        'bird',
+        'src/assets/textures/bird_shrunk_2.png',
+        Color.white()
+      )
     );
 
     AudioManager.loadSoundFile(
@@ -102,6 +108,7 @@ export class Engine implements IMessageHandler {
     // Find a better place for this?
     ComponentManager.registerBuilder(new SpriteComponentBuilder());
     ComponentManager.registerBuilder(new AnimatedSpriteComponentBuilder());
+    ComponentManager.registerBuilder(new CollisionComponentBuilder());
     BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
     BehaviorManager.registerBuilder(new KeyboardMovementBehaviorBuilder());
 
@@ -159,6 +166,8 @@ export class Engine implements IMessageHandler {
     MessageBus.update(delta);
 
     ZoneManager.update(delta);
+
+    CollisionManager.update(delta);
 
     this._previousTime = performance.now();
   }

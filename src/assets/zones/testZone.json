@@ -7,8 +7,8 @@
             "name": "bird",
             "transform": {
                 "position": {
-                    "x": 100,
-                    "y": 100
+                    "x": 500,
+                    "y": 700
                 },
                 "scale": {
                     "x": 8,
@@ -20,78 +20,61 @@
                     "name": "birdAnimatedSprite",
                     "materialName": "bird",
                     "type": "animatedSprite",
-                    "frameWidth": 32,
-                    "frameHeight": 32,
-                    "frameCount": 4,
-                    "frameSequence": [0,1,2,1]
+                    "frameWidth": 17,
+                    "frameHeight": 12,
+                    "frameCount": 3,
+                    "frameSequence": [0,1,2,1],
+                    "origin": {
+                        "x": 0.5,
+                        "y": 0.5
+                    }
+                },
+                {
+                    "name": "birdCollision",
+                    "type": "collision",
+                    "shape": {
+                        "type": "circle",
+                        "radius": 58
+                    }
                 }
             ],
             "behaviors": [
                 {
                     "name": "movementBehavior",
                     "type": "keyboardMovement",
-                    "speed": 3.5
+                    "speed": 4
                 }
             ]
         },
         {
-            "name": "parentObject",
+            "name": "testWall",
             "transform": {
                 "position": {
                     "x": 800,
                     "y": 400
                 }
             },
-            "children": [
-                {
-                    "name": "testObject",
-                    "transform": {
-                        "position":{
-                            "x": 100,
-                            "y": 100
-                        }
-                    },
-                    "components": [
-                        {
-                        "name": "testObject",
-                        "materialName": "woodPlank",
-                        "type": "sprite",
-                        "origin": {
-                            "x": 0.5,
-                            "y": 0.5
-                            }
-                        }
-                    ],
-                    "behaviors": [
-                        {
-                            "name": "rotateX",
-                            "type": "rotation",
-                            "rotation": {
-                                "z": -0.02
-                            }
-                        }
-                    ]
-                }
-            ],
             "components": [
                 {
-                "name": "parentTest",
-                "materialName": "stoneWall",
-                "type": "sprite",
-                "origin": {
-                    "x": 0.5,
-                    "y": 0.5
+                    "name": "parentTest",
+                    "materialName": "stoneWall",
+                    "type": "sprite",
+                    "origin": {
+                        "x": 0.5,
+                        "y": 0.5
+                    }
+                },
+                {
+                    "name": "testWallCollision",
+                    "type": "collision",
+                    "shape": {
+                        "type": "rectangle",
+                        "width": 100,
+                        "height": 100
                     }
                 }
             ],
             "behaviors": [
-                {
-                    "name": "rotateX",
-                    "type": "rotation",
-                    "rotation": {
-                        "z": 0.01
-                    }
-                }
             ]
         }
     ]

@@ -3,25 +3,39 @@ import { Circle2D } from './circle2D';
 import { IShape2D } from './IShape2D';
 
 export class Rectangle2D implements IShape2D {
+  public origin: Vector2 = new Vector2(0.5, 0.5);
   public position: Vector2 = Vector2.zero;
 
   public width: number | undefined;
   public height: number | undefined;
+
+  public get offset(): Vector2 {
+    return new Vector2(
+      //@ts-ignore
+      -(this.width * this.origin.x),
+      //@ts-ignore
+      -(this.height * this.origin.y)
+    );
+  }
 
   setFromJson(json: any): void {
     if (json.position) {
       this.position.setFromJson(json.position);
     }
 
+    if (json.origin) {
+      this.origin.setFromJson(json.origin);
+    }
+
     if (json.width === undefined) {
       throw new Error('rectangle2d requires width to be present.');
     }
-    this.width = json.width;
+    this.width = Number(json.width);
 
     if (json.height === undefined) {
       throw new Error('rectangle2d requires height to be present.');
     }
-    this.height = json.height;
+    this.height = Number(json.height);
   }
 
   public intersects(otherShape: IShape2D): boolean {
@@ -61,20 +75,23 @@ export class Rectangle2D implements IShape2D {
       this.width &&
       this.height
     ) {
+      const deltaX =
+        otherShape.position.x -
+        Math.max(
+          this.position.x,
+          Math.min(otherShape.position.x, this.position.x + this.width)
+        );
+
+      const deltaY =
+        otherShape.position.y -
+        Math.max(
+          this.position.y,
+          Math.min(otherShape.position.y, this.position.y + this.height)
+        );
+
       if (
-        otherShape.pointInShape(this.position) ||
-        otherShape.pointInShape(
-          new Vector2(this.position.x + this.width, this.position.y)
-        ) ||
-        otherShape.pointInShape(
-          new Vector2(
-            this.position.x + this.width,
-            this.position.y + this.height
-          )
-        ) ||
-        otherShape.pointInShape(
-          new Vector2(this.position.x, this.position.y + this.height)
-        )
+        deltaX * deltaX + deltaY * deltaY <
+        otherShape.radius * otherShape.radius
       ) {
         return true;
       }
