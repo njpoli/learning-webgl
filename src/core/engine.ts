@@ -28,24 +28,36 @@ export class Engine implements IMessageHandler {
   private _basicShader: BasicShader | undefined;
   private _projection: Matrix4x4 | undefined;
   private _previousTime: number = 0;
+  private _gameWidth: number | undefined;
+  private _gameHeight: number | undefined;
 
   /**
    * Creates a new engine
+   * @param width The width of the game in pixels
+   * @param height The height of the game in pixels
    */
-  public constructor() {}
+  public constructor(width?: number, height?: number) {
+    this._gameWidth = width;
+    this._gameHeight = height;
+  }
 
   /**
    * Starts up this engine
    */
   public start(): void {
     this._canvas = GLUtilities.initialize();
+    if (this._gameWidth && this._gameHeight) {
+      this._canvas.style.width = this._gameWidth + 'px';
+      this._canvas.style.height = this._gameHeight + 'px';
+      this._canvas.width = this._gameWidth;
+      this._canvas.height = this._gameHeight;
+    }
+
     AssetManager.initialize();
     InputManager.initialize();
     ZoneManager.initialize();
 
-    Message.subscribe('MOUSE_DOWN', this);
-
-    gl.clearColor(0, 0, 0.3, 1);
+    gl.clearColor(146 / 255, 206 / 255, 247 / 255, 1);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -93,6 +105,10 @@ export class Engine implements IMessageHandler {
       )
     );
 
+    MaterialManager.registerMaterial(
+      new Material('grass', 'src/assets/textures/grass.png', Color.white())
+    );
+
     AudioManager.loadSoundFile(
       'birdJump',
       'src/assets/sounds/bird_jump.wav',
@@ -104,6 +120,10 @@ export class Engine implements IMessageHandler {
       'src/assets/sounds/alf_remix.mp3',
       true
     );
+
+    AudioManager.loadSoundFile('ting', 'src/assets/sounds/ting.wav', true);
+
+    AudioManager.loadSoundFile('death', 'src/assets/sounds/death.wav', true);
 
     // Find a better place for this?
     ComponentManager.registerBuilder(new SpriteComponentBuilder());
@@ -124,8 +144,10 @@ export class Engine implements IMessageHandler {
    */
   public resize() {
     if (this._canvas !== undefined) {
-      this._canvas.width = window.innerWidth;
-      this._canvas.height = window.innerHeight;
+      if (!this._gameWidth || !this._gameHeight) {
+        this._canvas.width = window.innerWidth;
+        this._canvas.height = window.innerHeight;
+      }
 
       this._projection = Matrix4x4.orthographic(
         0,
@@ -148,11 +170,6 @@ export class Engine implements IMessageHandler {
   public onMessage(message: Message): void {
     const mouseContext = message.context as MouseContext;
     if (message.code === 'MOUSE_DOWN' && mouseContext) {
-      if (mouseContext.leftDown) {
-        AudioManager.playSound('birdJump');
-      } else if (mouseContext.rightDown) {
-        AudioManager.toggleSound('music');
-      }
     }
   }
 

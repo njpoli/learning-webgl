@@ -1,3 +1,5 @@
+import { Vector3 } from './vector3';
+
 export class Vector2 {
   private _x: number;
   private _y: number;
@@ -49,11 +51,24 @@ export class Vector2 {
     return new Float32Array(this.toArray());
   }
 
+  public toVector3(): Vector3 {
+    return new Vector3(this._x, this._y, 0);
+  }
+
+  public set(x?: number, y?: number): void {
+    if (x !== undefined) {
+      this._x = x;
+    }
+    if (y !== undefined) {
+      this._y = y;
+    }
+  }
+
   public setFromJson(json: any): void {
-    if (json.x) {
+    if (json.x !== undefined) {
       this._x = Number(json.x);
     }
-    if (json.y) {
+    if (json.y !== undefined) {
       this._y = Number(json.y);
     }
   }
@@ -82,6 +97,13 @@ export class Vector2 {
   public divide(v: Vector2): Vector2 {
     this._x /= v._x;
     this._y /= v._y;
+
+    return this;
+  }
+
+  public scale(scale: number): Vector2 {
+    this._x *= scale;
+    this._y *= scale;
 
     return this;
   }

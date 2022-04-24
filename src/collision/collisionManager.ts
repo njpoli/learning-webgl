@@ -1,6 +1,7 @@
 import { CollisionComponent } from '../components/collisionComponent';
+import { Message } from '../core/message/message';
 
-class CollisionData {
+export class CollisionData {
   public time: number;
   public a: CollisionComponent | undefined;
   public b: CollisionComponent | undefined;
@@ -78,6 +79,8 @@ export class CollisionManager {
               comp,
               other
             );
+            Message.sendPriority('COLLISION_ENTRY:' + comp.name, this, coll);
+            Message.sendPriority('COLLISION_ENTRY:' + other.name, this, coll);
             this._collisionData.push(coll);
           }
         }
@@ -96,6 +99,10 @@ export class CollisionManager {
         data.a?.onCollisionExit(data.b);
         // @ts-ignore
         data.b?.onCollisionExit(data.a);
+        // @ts-ignore
+        Message.sendPriority('COLLISION_EXIT:' + data.a.name, this, data);
+        // @ts-ignore
+        Message.sendPriority('COLLISION_EXIT:' + data.b.name, this, data);
       }
     }
 

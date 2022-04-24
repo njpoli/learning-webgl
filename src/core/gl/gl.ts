@@ -25,7 +25,7 @@ export class GLUtilities {
 
     gl = canvas.getContext('webgl') as WebGLRenderingContext;
 
-    if (gl === undefined) {
+    if (gl === undefined || gl === null) {
       throw new Error('Unable to initialize WebGL');
     }
 

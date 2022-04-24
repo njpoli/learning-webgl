@@ -7,12 +7,12 @@
             "name": "bird",
             "transform": {
                 "position": {
-                    "x": 500,
-                    "y": 700
+                    "x": 200,
+                    "y": 100
                 },
                 "scale": {
-                    "x": 8,
-                    "y": 8
+                    "x": 2,
+                    "y": 2
                 }
             },
             "components": [
@@ -47,7 +47,7 @@
             ]
         },
         {
-            "name": "testWall",
+            "name": "grass",
             "transform": {
                 "position": {
                     "x": 800,
@@ -56,16 +56,12 @@
             },
             "components": [
                 {
-                    "name": "parentTest",
-                    "materialName": "stoneWall",
-                    "type": "sprite",
-                    "origin": {
-                        "x": 0.5,
-                        "y": 0.5
-                    }
+                    "name": "grassTest",
+                    "materialName": "grass",
+                    "type": "sprite"
                 },
                 {
-                    "name": "testWallCollision",
+                    "name": "grassCollision",
                     "type": "collision",
                     "shape": {
                         "type": "rectangle",

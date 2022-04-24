@@ -44,13 +44,13 @@ export class Vector3 {
   }
 
   public set(x?: number, y?: number, z?: number): void {
-    if (x) {
+    if (x !== undefined) {
       this._x = x;
     }
-    if (y) {
+    if (y !== undefined) {
       this._y = y;
     }
-    if (z) {
+    if (z !== undefined) {
       this._z = z;
     }
   }
@@ -84,13 +84,13 @@ export class Vector3 {
   }
 
   public setFromJson(json: any): void {
-    if (json.x) {
+    if (json.x !== undefined) {
       this._x = Number(json.x);
     }
-    if (json.y) {
+    if (json.y !== undefined) {
       this._y = Number(json.y);
     }
-    if (json.z) {
+    if (json.z !== undefined) {
       this._z = Number(json.z);
     }
   }

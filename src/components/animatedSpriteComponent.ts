@@ -1,5 +1,6 @@
 import { Shader } from '../core/gl/shader';
 import { AnimatedSprite } from '../core/graphics/animatedSprite';
+import { Vector3 } from '../core/math/vector3';
 import { BaseComponent } from './baseComponent';
 import { IComponent } from './IComponent';
 import { IComponentBuilder } from './IComponentBuilder';
@@ -14,9 +15,14 @@ export class AnimatedSpriteComponentData
   public frameHeight: number = 0;
   public frameCount: number = 0;
   public frameSequence: number[] = [];
+  public autoPlay: boolean = true;
 
   public setFromJson(json: any): void {
     super.setFromJson(json);
+
+    if (json.autoPlay !== undefined) {
+      this.autoPlay = Boolean(json.autoPlay);
+    }
 
     if (json.frameWidth === undefined) {
       throw new Error('Animated sprite data requires frameWidth to be defined');
@@ -62,10 +68,12 @@ export class AnimatedSpriteComponentBuilder implements IComponentBuilder {
 }
 
 export class AnimatedSpriteComponent extends BaseComponent {
+  private _autopPlay: boolean;
   private _sprite: AnimatedSprite;
 
   public constructor(data: AnimatedSpriteComponentData) {
     super(data);
+    this._autopPlay = data.autoPlay;
 
     this._sprite = new AnimatedSprite(
       data.name,
@@ -77,15 +85,43 @@ export class AnimatedSpriteComponent extends BaseComponent {
       data.frameCount,
       data.frameSequence
     );
+
+    // Have to do this even though calling super because of this._sprite call
+    // above wipes out the origin
+    if (!data.origin.equals(Vector3.zero)) {
+      this._sprite.origin.copyFrom(data.origin);
+    }
+  }
+
+  public isPlaying(): boolean {
+    return this._sprite.isPlaying;
   }
 
   public load(): void {
     this._sprite.load();
   }
 
+  public updateReady(): void {
+    if (!this._autopPlay) {
+      this._sprite.stop();
+    }
+  }
+
   public update(time: number): void {
     this._sprite.update(time);
     super.update(time);
+  }
+
+  public play(): void {
+    this._sprite.play();
+  }
+
+  public stop(): void {
+    this._sprite.stop();
+  }
+
+  public setFrame(frameNumber: number): void {
+    this._sprite.setFrame(frameNumber);
   }
 
   public render(shader: Shader): void {

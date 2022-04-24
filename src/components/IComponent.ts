@@ -9,6 +9,8 @@ export interface IComponent {
 
   load(): void;
 
+  updateReady(): void;
+
   update(time: number): void;
 
   render(shader: Shader): void;

@@ -6,6 +6,7 @@ import { ImageAsset } from '../assets/imageAssetLoader';
 import { Vector2 } from '../math/vector2';
 import { IMessageHandler } from '../message/IMessageHandler';
 import { Message } from '../message/message';
+import { MaterialManager } from './materialManager';
 import { Sprite } from './sprite';
 
 class UVInfo {
@@ -32,6 +33,7 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
   private _assetLoaded: boolean = false;
   private _assetWidth: number = 2;
   private _assetHeight: number = 2;
+  private _isPlaying: boolean = true;
 
   public constructor(
     name: string,
@@ -58,6 +60,31 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
     }
   }
 
+  public get isPlaying(): boolean {
+    return this._isPlaying;
+  }
+
+  public play(): void {
+    this._isPlaying = true;
+  }
+
+  public stop(): void {
+    this._isPlaying = false;
+  }
+
+  public setFrame(frameNumber: number): void {
+    if (frameNumber >= this._frameCount) {
+      throw new Error(
+        'Frame is our of range:' +
+          frameNumber +
+          '\nframeCount: ' +
+          this._frameCount
+      );
+    }
+
+    this._currentFrame = frameNumber;
+  }
+
   public onMessage(message: Message): void {
     if (
       message.code ===
@@ -77,24 +104,26 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
 
   public load(): void {
     super.load();
+
+    if (!this._assetLoaded) {
+      this.setupFromMaterial();
+    }
   }
 
   public update(time: number): void {
     // Hack around for not being instantiated before onMessage is sent
     // Revisit
     if (this._material && !this._assetLoaded) {
-      let asset = AssetManager.getAsset(
-        this._material?.diffuseTextureName
-      ) as ImageAsset;
-      if (asset) {
-        this._assetLoaded = true;
-        this._assetHeight = asset.height;
-        this._assetWidth = asset.width;
-        this.calculateUVs();
-      } else {
+      this.setupFromMaterial();
+      if (!this._assetLoaded) {
         return;
       }
     }
+
+    if (!this._isPlaying) {
+      return;
+    }
+
     this._currentTime += time;
     if (this._currentTime > this._frameTime) {
       this._currentFrame++;
@@ -153,6 +182,20 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
       let max: Vector2 = new Vector2(uMax, vMax);
 
       this._frameUVs.push(new UVInfo(min, max));
+    }
+  }
+
+  private setupFromMaterial(): void {
+    if (!this._assetLoaded) {
+      const material = MaterialManager.getMaterial(this._materialName);
+      if (material?.diffuseTexture?.isLoaded) {
+        if (AssetManager.isAssetLoaded(material.diffuseTextureName)) {
+          this._assetHeight = material.diffuseTexture.height;
+          this._assetWidth = material.diffuseTexture.width;
+          this._assetLoaded = true;
+          this.calculateUVs();
+        }
+      }
     }
   }
 }
