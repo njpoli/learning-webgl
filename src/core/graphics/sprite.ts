@@ -23,6 +23,7 @@ export class Sprite {
     width: number = 100,
     height: number = 100
   ) {
+    console.log(`height and width: `, width, height);
     this._name = name;
     this._width = width;
     this._height = height;

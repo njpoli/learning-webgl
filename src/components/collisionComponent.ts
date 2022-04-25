@@ -97,13 +97,7 @@ export class CollisionComponent extends BaseComponent {
     super.render(shader);
   }
 
-  public onCollisionEntry(other: CollisionComponent): void {
-    console.log('onCollisionEntry:', this, other);
-  }
-  public onCollisionUpdate(other: CollisionComponent): void {
-    console.log('onCollisionUpdate', this, other);
-  }
-  public onCollisionExit(other: CollisionComponent): void {
-    console.log('onCollisionExit', this, other);
-  }
+  public onCollisionEntry(other: CollisionComponent): void {}
+  public onCollisionUpdate(other: CollisionComponent): void {}
+  public onCollisionExit(other: CollisionComponent): void {}
 }

@@ -15,10 +15,10 @@ export class SpriteComponentData implements IComponentData {
 
   public setFromJson(json: any): void {
     if (json.width) {
-      this.name = String(json.name);
+      this.width = Number(json.width);
     }
     if (json.height) {
-      this.name = String(json.name);
+      this.height = Number(json.height);
     }
     if (json.name) {
       this.name = String(json.name);
@@ -40,6 +40,7 @@ export class SpriteComponentBuilder implements IComponentBuilder {
   public buildFromJson(json: any): IComponent {
     let data = new SpriteComponentData();
     data.setFromJson(json);
+    console.log('sprite json', json);
 
     return new SpriteComponent(data);
   }
@@ -52,13 +53,19 @@ export class SpriteComponent extends BaseComponent {
 
   public constructor(data: SpriteComponentData) {
     super(data);
+    console.log(`setting sprite data: `, data);
     if (data.width !== undefined) {
-      this._width = data.width;
+      this._width = Number(data.width);
     }
     if (data.height !== undefined) {
-      this._height = data.height;
+      this._height = Number(data.height);
     }
-    this._sprite = new Sprite(data.name, data.materialName);
+    this._sprite = new Sprite(
+      data.name,
+      data.materialName,
+      this._width,
+      this._height
+    );
 
     if (!data.origin.equals(Vector3.zero)) {
       this._sprite.origin.copyFrom(data.origin);

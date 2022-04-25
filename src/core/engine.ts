@@ -7,6 +7,7 @@ import { AssetManager } from './assets/assetManager';
 import { AudioManager } from './audio/audioManager';
 import { BehaviorManager } from './behaviors/behaviorManager';
 import { KeyboardMovementBehaviorBuilder } from './behaviors/keyboardMovementBehavior';
+import { PlayerBehaviorBuilder } from './behaviors/playerBehavior';
 import { RotationBehaviorBuilder } from './behaviors/rotationBehavior';
 import { gl, GLUtilities } from './gl/gl';
 import { BasicShader } from './gl/shaders/basicShader';
@@ -106,7 +107,11 @@ export class Engine implements IMessageHandler {
     );
 
     MaterialManager.registerMaterial(
-      new Material('grass', 'src/assets/textures/grass.png', Color.white())
+      new Material(
+        'grass',
+        'src/assets/textures/grass_bigger.png',
+        Color.white()
+      )
     );
 
     AudioManager.loadSoundFile(
@@ -121,15 +126,20 @@ export class Engine implements IMessageHandler {
       true
     );
 
-    AudioManager.loadSoundFile('ting', 'src/assets/sounds/ting.wav', true);
-
-    AudioManager.loadSoundFile('death', 'src/assets/sounds/death.wav', true);
+    AudioManager.loadSoundFile('ting', 'src/assets/sounds/ting.wav', false);
+    AudioManager.loadSoundFile(
+      'flap',
+      'src/assets/sounds/bird_jump.wav',
+      false
+    );
+    AudioManager.loadSoundFile('dead', 'src/assets/sounds/death.wav', false);
 
     // Find a better place for this?
     ComponentManager.registerBuilder(new SpriteComponentBuilder());
     ComponentManager.registerBuilder(new AnimatedSpriteComponentBuilder());
     ComponentManager.registerBuilder(new CollisionComponentBuilder());
     BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
+    BehaviorManager.registerBuilder(new PlayerBehaviorBuilder());
     BehaviorManager.registerBuilder(new KeyboardMovementBehaviorBuilder());
 
     // TODO: Change this to be read from game config

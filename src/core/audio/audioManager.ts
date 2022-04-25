@@ -55,6 +55,8 @@ export class AudioManager {
   public static playSound(name: string): void {
     if (AudioManager._soundEffects[name]) {
       AudioManager._soundEffects[name].play();
+    } else {
+      console.log(`could not play sound ${name}`);
     }
   }
 

@@ -74,7 +74,22 @@ export class SimObject {
         return component;
       }
     }
+    return undefined;
+  }
 
+  public getBehaviorByName(name: string): IBehavior | undefined {
+    for (let behavior of this._behaviors) {
+      if (behavior.name === name) {
+        return behavior;
+      }
+    }
+
+    for (let child of this._children) {
+      let behavior = child.getBehaviorByName(name);
+      if (behavior !== undefined) {
+        return behavior;
+      }
+    }
     return undefined;
   }
 
