@@ -174,9 +174,6 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
           Message.send('PLAYER_DIED', this);
         }
         break;
-      default:
-        console.log('got a message');
-        break;
     }
   }
 
