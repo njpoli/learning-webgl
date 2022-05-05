@@ -4,6 +4,36 @@
     "id": 0,
     "objects": [
         {
+            "name": "bg",
+            "transform": {
+                "position": {
+                    "x": 0,
+                    "y": 100
+                }
+            },
+            "components": [
+                {
+                    "name": "bgSprite",
+                    "type": "sprite",
+                    "materialName": "bg",
+                    "width": 128,
+                    "height": 64
+                }
+            ],
+            "behaviors": []
+        },
+        {
+            "name": "pipeEnd",
+            "transform": {
+                "position": {
+                    "x": 300,
+                    "y": 0
+                }
+            },
+            "components": [],
+            "behaviors": []
+        },
+        {
             "name": "bird",
             "transform": {
                 "position": {
@@ -11,8 +41,8 @@
                     "y": 100
                 },
                 "scale": {
-                    "x": 2,
-                    "y": 2
+                    "x": 3,
+                    "y": 3
                 }
             },
             "components": [
@@ -34,7 +64,7 @@
                     "type": "collision",
                     "shape": {
                         "type": "circle",
-                        "radius": 8.5
+                        "radius": 10.5
                     }
                 }
             ],
@@ -58,11 +88,11 @@
             "transform": {
                 "position": {
                     "x":0,
-                    "y": 465
+                    "y": 600
                 },
                 "scale": {
-                    "x": 1,
-                    "y": 1
+                    "x": 1.5,
+                    "y": 1.5
                 }
             },
             "components": [
