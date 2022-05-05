@@ -51,19 +51,19 @@ export class InputManager {
 
   private static onKeyDown(event: KeyboardEvent): boolean {
     InputManager._keys[event.keyCode] = true;
-    if (event.keyCode !== 16 && event.keyCode !== 17 && event.keyCode !== 73) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+    //if (event.keyCode !== 16 && event.keyCode !== 17 && event.keyCode !== 73) {
+    //event.preventDefault();
+    //event.stopPropagation();
+    //}
     return true;
   }
 
   private static onKeyUp(event: KeyboardEvent): boolean {
     InputManager._keys[event.keyCode] = false;
-    if (event.keyCode !== 16 && event.keyCode !== 17 && event.keyCode !== 73) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+    // if (event.keyCode !== 16 && event.keyCode !== 17 && event.keyCode !== 73) {
+    //   event.preventDefault();
+    //   event.stopPropagation();
+    // }
     return false;
   }
 

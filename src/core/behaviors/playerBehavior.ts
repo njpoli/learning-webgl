@@ -3,6 +3,7 @@ import { AnimatedSpriteComponent } from '../../components/animatedSpriteComponen
 import { AudioManager } from '../audio/audioManager';
 import { MathExtensions } from '../math/mathExtensions';
 import { Vector2 } from '../math/vector2';
+import { Vector3 } from '../math/vector3';
 import { IMessageHandler } from '../message/IMessageHandler';
 import { Message } from '../message/message';
 import { BaseBehavior } from './baseBehavior';
@@ -71,9 +72,17 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
   private _playerCollisionComponent: string = '';
   private _groundCollisionComponent: string = '';
   private _animatedSpriteName: string = '';
+  private _isPlaying: boolean = false;
+  private _initialPosition: Vector3 = Vector3.zero;
 
   //@ts-ignore
   private _sprite: AnimatedSpriteComponent;
+  private _pipeNames: string[] = [
+    'pipe1CollisionEndTop',
+    'pipe1CollisionBodyTop',
+    'pipe1CollisionEndBottom',
+    'pipe1CollisionBodyBottom',
+  ];
 
   public constructor(data: PlayerBehaviorData) {
     super(data);
@@ -88,6 +97,8 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
       'COLLISION_ENTRY:' + this._playerCollisionComponent,
       this
     );
+    Message.subscribe('GAME_RESET', this);
+    Message.subscribe('GAME_START', this);
   }
 
   public updateReady(): void {
@@ -97,13 +108,14 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
     this._sprite = this._owner?.getComponentByName(
       this._animatedSpriteName
     ) as AnimatedSpriteComponent;
+
+    // Make sure sprite animation plays right away
+    this._sprite.setFrame(0);
+
+    this._initialPosition.copyFrom(this._owner!.transform.position);
   }
 
   public update(time: number): void {
-    if (!this._isAlive) {
-      return;
-    }
-
     const spriteReady = this._owner?.getComponentByName(
       this._animatedSpriteName
     );
@@ -113,7 +125,10 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
 
     if (this._owner) {
       const seconds: number = time / 1000;
-      this._velocity.add(this._acceleration.clone().scale(seconds));
+
+      if (this._isPlaying) {
+        this._velocity.add(this._acceleration.clone().scale(seconds));
+      }
 
       // Limit max speed of falling
       if (this._velocity.y > 400) {
@@ -149,7 +164,7 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
       if (this.shouldNotFlap()) {
         this._sprite.stop();
       } else {
-        if (!this._sprite.isPlaying()) {
+        if (!this._sprite.isPlaying) {
           this._sprite.play();
         }
       }
@@ -171,8 +186,20 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
         ) {
           this.die();
           this.decelerate();
-          Message.send('PLAYER_DIED', this);
         }
+
+        if (
+          this._pipeNames.indexOf(data.a!.name) !== -1 ||
+          this._pipeNames.indexOf(data.b!.name) !== -1
+        ) {
+          this.die();
+        }
+        break;
+      case 'GAME_RESET':
+        this.reset();
+        break;
+      case 'GAME_START':
+        this.start();
         break;
     }
   }
@@ -186,8 +213,27 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
   }
 
   private die(): void {
-    this._isAlive = false;
-    AudioManager.playSound('dead');
+    if (this._isAlive) {
+      this._isAlive = false;
+      AudioManager.playSound('dead');
+      Message.send('PLAYER_DIED', this);
+    }
+  }
+
+  private reset(): void {
+    this._isAlive = true;
+    this._isPlaying = false;
+    this._sprite.owner!.transform.position.copyFrom(this._initialPosition);
+    this._sprite.owner!.transform.rotation.z = 0;
+
+    this._velocity.set(0, 0);
+    this._acceleration.set(0, 920);
+    this._sprite.play();
+  }
+
+  private start(): void {
+    this._isPlaying = true;
+    Message.send('PLAYER_RESET', this);
   }
 
   private decelerate(): void {
@@ -196,7 +242,7 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
   }
 
   private onFlap(): void {
-    if (this._isAlive) {
+    if (this._isAlive && this._isPlaying) {
       this._velocity.y = -280;
       AudioManager.playSound('flap');
     }

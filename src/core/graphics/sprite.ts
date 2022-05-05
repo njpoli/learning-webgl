@@ -23,7 +23,6 @@ export class Sprite {
     width: number = 100,
     height: number = 100
   ) {
-    console.log(`height and width: `, width, height);
     this._name = name;
     this._width = width;
     this._height = height;
@@ -42,6 +41,14 @@ export class Sprite {
   public set origin(value: Vector3) {
     this._origin = value;
     this.recalculateVertices();
+  }
+
+  public get width(): number {
+    return this._width;
+  }
+
+  public get height(): number {
+    return this._height;
   }
 
   public destroy(): void {

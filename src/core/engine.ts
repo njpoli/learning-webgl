@@ -9,6 +9,7 @@ import { BehaviorManager } from './behaviors/behaviorManager';
 import { KeyboardMovementBehaviorBuilder } from './behaviors/keyboardMovementBehavior';
 import { PlayerBehaviorBuilder } from './behaviors/playerBehavior';
 import { RotationBehaviorBuilder } from './behaviors/rotationBehavior';
+import { ScrollBehaviorBuilder } from './behaviors/scrollBehavior';
 import { gl, GLUtilities } from './gl/gl';
 import { BasicShader } from './gl/shaders/basicShader';
 import { Color } from './graphics/color';
@@ -40,6 +41,8 @@ export class Engine implements IMessageHandler {
   public constructor(width?: number, height?: number) {
     this._gameWidth = width;
     this._gameHeight = height;
+
+    Message.subscribe('MOUSE_DOWN', this);
   }
 
   /**
@@ -58,7 +61,7 @@ export class Engine implements IMessageHandler {
     InputManager.initialize();
     ZoneManager.initialize();
 
-    gl.clearColor(146 / 255, 206 / 255, 247 / 255, 1);
+    gl.clearColor(99 / 255, 155 / 255, 255 / 255, 1);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -99,11 +102,23 @@ export class Engine implements IMessageHandler {
     );
 
     MaterialManager.registerMaterial(
+      new Material('bg', 'src/assets/textures/background.png', Color.white())
+    );
+
+    MaterialManager.registerMaterial(
+      new Material('pipeEnd', 'src/assets/textures/pipe_end.png', Color.white())
+    );
+
+    MaterialManager.registerMaterial(
       new Material(
-        'bird',
-        'src/assets/textures/bird_shrunk_2.png',
+        'pipeBody',
+        'src/assets/textures/pipe_body.png',
         Color.white()
       )
+    );
+
+    MaterialManager.registerMaterial(
+      new Material('bird', 'src/assets/textures/bird_shrunk.png', Color.white())
     );
 
     MaterialManager.registerMaterial(
@@ -141,6 +156,7 @@ export class Engine implements IMessageHandler {
     BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
     BehaviorManager.registerBuilder(new PlayerBehaviorBuilder());
     BehaviorManager.registerBuilder(new KeyboardMovementBehaviorBuilder());
+    BehaviorManager.registerBuilder(new ScrollBehaviorBuilder());
 
     // TODO: Change this to be read from game config
     ZoneManager.changeZone(0);
@@ -180,6 +196,8 @@ export class Engine implements IMessageHandler {
   public onMessage(message: Message): void {
     const mouseContext = message.context as MouseContext;
     if (message.code === 'MOUSE_DOWN' && mouseContext) {
+      Message.send('GAME_START', undefined, undefined);
+      console.log('sending a message');
     }
   }
 

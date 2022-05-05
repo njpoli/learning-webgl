@@ -93,7 +93,7 @@ export class AnimatedSpriteComponent extends BaseComponent {
     }
   }
 
-  public isPlaying(): boolean {
+  public get isPlaying(): boolean {
     return this._sprite.isPlaying;
   }
 

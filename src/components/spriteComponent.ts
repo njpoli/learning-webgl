@@ -40,7 +40,6 @@ export class SpriteComponentBuilder implements IComponentBuilder {
   public buildFromJson(json: any): IComponent {
     let data = new SpriteComponentData();
     data.setFromJson(json);
-    console.log('sprite json', json);
 
     return new SpriteComponent(data);
   }
@@ -53,7 +52,6 @@ export class SpriteComponent extends BaseComponent {
 
   public constructor(data: SpriteComponentData) {
     super(data);
-    console.log(`setting sprite data: `, data);
     if (data.width !== undefined) {
       this._width = Number(data.width);
     }

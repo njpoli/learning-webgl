@@ -47,8 +47,12 @@ export class CollisionManager {
 
     for (let c = 0; c < CollisionManager._components.length; c++) {
       let comp = CollisionManager._components[c];
-      for (let o = c + 1; c < CollisionManager._components.length; c++) {
+      for (let o = c + 1; o < CollisionManager._components.length; o++) {
         let other = CollisionManager._components[o];
+        // If both shapes are static, stop detection.
+        if (comp && other && comp.isStatic && other.isStatic) {
+          continue;
+        }
 
         if (comp.shape.intersects(other.shape)) {
           // Have a collision

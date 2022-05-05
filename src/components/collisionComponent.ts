@@ -11,10 +11,14 @@ import { CollisionManager } from '../collision/collisionManager';
 export class CollisionComponentData implements IComponentData {
   public name: string = '';
   public shape: IShape2D | undefined;
+  public static: boolean = true;
 
   public setFromJson(json: any): void {
     if (json.name) {
       this.name = String(json.name);
+    }
+    if (json.static !== undefined) {
+      this.static = Boolean(json.static);
     }
     if (json.shape?.type) {
       switch (String(json.shape.type).toLowerCase()) {
@@ -52,6 +56,7 @@ export class CollisionComponentBuilder implements IComponentBuilder {
 
 export class CollisionComponent extends BaseComponent {
   private _shape: IShape2D;
+  private _static: boolean;
 
   public constructor(data: CollisionComponentData) {
     super(data);
@@ -60,18 +65,23 @@ export class CollisionComponent extends BaseComponent {
       throw new Error('Data is missing "shape" property:');
     }
     this._shape = data.shape;
+    this._static = data.static;
   }
 
   public get shape(): IShape2D {
     return this._shape;
   }
 
+  public get isStatic(): boolean {
+    return this._static;
+  }
+
   public load(): void {
     super.load();
 
-    if (this._owner) {
+    if (this.owner) {
       this._shape.position.copyFrom(
-        this._owner.transform.position.toVector2().add(this._shape.offset)
+        this.owner.getWorldPosition().toVector2().subtract(this._shape.offset)
       );
     }
 
@@ -80,9 +90,9 @@ export class CollisionComponent extends BaseComponent {
   }
 
   public update(time: number): void {
-    if (this._owner) {
+    if (this.owner) {
       this._shape.position.copyFrom(
-        this._owner.transform.position.toVector2().add(this._shape.offset)
+        this.owner.getWorldPosition().toVector2().subtract(this._shape.offset)
       );
     }
 

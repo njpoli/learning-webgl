@@ -3,7 +3,7 @@ import { Circle2D } from './circle2D';
 import { IShape2D } from './IShape2D';
 
 export class Rectangle2D implements IShape2D {
-  public origin: Vector2 = new Vector2(0.5, 0.5);
+  public origin: Vector2 = Vector2.zero;
   public position: Vector2 = Vector2.zero;
 
   public width: number | undefined;
@@ -12,9 +12,9 @@ export class Rectangle2D implements IShape2D {
   public get offset(): Vector2 {
     return new Vector2(
       //@ts-ignore
-      -(this.width * this.origin.x),
+      this.width * this.origin.x,
       //@ts-ignore
-      -(this.height * this.origin.y)
+      this.height * this.origin.y
     );
   }
 
@@ -44,7 +44,7 @@ export class Rectangle2D implements IShape2D {
       otherShape.width &&
       otherShape.height
     ) {
-      if (
+      return (
         this.pointInShape(otherShape.position) ||
         this.pointInShape(
           new Vector2(
@@ -64,9 +64,7 @@ export class Rectangle2D implements IShape2D {
             otherShape.position.y + otherShape.height
           )
         )
-      ) {
-        return true;
-      }
+      );
     }
 
     if (
@@ -102,18 +100,24 @@ export class Rectangle2D implements IShape2D {
 
   public pointInShape(point: Vector2): boolean {
     if (this.width && this.height) {
+      let x = this.width < 0 ? this.position.x - this.width : this.position.x;
+      let y = this.height < 0 ? this.position.y - this.height : this.position.y;
+
+      let extentX =
+        this.width < 0 ? this.position.x : this.position.x + this.width;
+      let extentY =
+        this.height < 0 ? this.position.y : this.position.y + this.height;
+
       if (
-        point.x >= this.position.x &&
-        point.x <= this.position.x + this.width
+        point.x >= x &&
+        point.x <= extentX &&
+        point.y >= y &&
+        point.y <= extentY
       ) {
-        if (
-          point.y >= this.position.y &&
-          point.y <= this.position.y + this.height
-        ) {
-          return true;
-        }
+        return true;
       }
     }
+
     return false;
   }
 }
