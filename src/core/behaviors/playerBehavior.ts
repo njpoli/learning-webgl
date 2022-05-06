@@ -216,6 +216,7 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
     if (this._isAlive) {
       this._isAlive = false;
       AudioManager.playSound('dead');
+      AudioManager.stopSound('music');
       Message.send('PLAYER_DIED', this);
     }
   }
@@ -233,6 +234,7 @@ export class PlayerBehavior extends BaseBehavior implements IMessageHandler {
 
   private start(): void {
     this._isPlaying = true;
+    AudioManager.playSound('music');
     Message.send('PLAYER_RESET', this);
   }
 
