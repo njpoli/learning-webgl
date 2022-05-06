@@ -26,6 +26,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       hash: true,
       title: 'Learning WebGL',
+      favicon: './src/assets/icon/favicon.ico',
       template: './src/index.html',
     }),
   ],
@@ -44,7 +45,7 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|json|wav|mp3)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|json|wav|mp3|ico)$/i,
         type: 'asset/resource',
       },
     ],

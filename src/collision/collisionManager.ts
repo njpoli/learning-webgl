@@ -116,8 +116,5 @@ export class CollisionManager {
       CollisionManager._collisionData.splice(idx, 1);
       removeData.shift();
     }
-
-    // TODO: Remove Me
-    document.title = CollisionManager._collisionData.length.toString();
   }
 }
