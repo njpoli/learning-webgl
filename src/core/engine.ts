@@ -1,5 +1,6 @@
 import { CollisionManager } from '../collision/collisionManager';
 import { AnimatedSpriteComponentBuilder } from '../components/animatedSpriteComponent';
+import { BitmapTextComponentBuilder } from '../components/bitmapTextComponent';
 import { CollisionComponentBuilder } from '../components/collisionComponent';
 import { ComponentManager } from '../components/componentManager';
 import { SpriteComponentBuilder } from '../components/spriteComponent';
@@ -12,6 +13,7 @@ import { RotationBehaviorBuilder } from './behaviors/rotationBehavior';
 import { ScrollBehaviorBuilder } from './behaviors/scrollBehavior';
 import { gl, GLUtilities } from './gl/gl';
 import { BasicShader } from './gl/shaders/basicShader';
+import { BitmapFontManager } from './graphics/bitmapFontManager';
 import { Color } from './graphics/color';
 import { Material } from './graphics/material';
 import { MaterialManager } from './graphics/materialManager';
@@ -76,13 +78,23 @@ export class Engine implements IMessageHandler {
       true,
       /\.(wav|mp3)$/i
     );
+    let fontContext = require.context(
+      '../assets/fonts/',
+      true,
+      /\.(png|txt)$/i
+    );
 
     this.loadAll(imageContext);
     this.loadAll(jsonContext);
     this.loadAll(audioContext);
+    this.loadAll(fontContext);
 
     this._basicShader = new BasicShader();
     this._basicShader.use();
+
+    // Load fonts
+    BitmapFontManager.addFont('default', 'src/assets/fonts/nate-8-bit.txt');
+    BitmapFontManager.load();
 
     // Load materials
     MaterialManager.registerMaterial(
@@ -153,16 +165,16 @@ export class Engine implements IMessageHandler {
     ComponentManager.registerBuilder(new SpriteComponentBuilder());
     ComponentManager.registerBuilder(new AnimatedSpriteComponentBuilder());
     ComponentManager.registerBuilder(new CollisionComponentBuilder());
+    ComponentManager.registerBuilder(new BitmapTextComponentBuilder());
     BehaviorManager.registerBuilder(new RotationBehaviorBuilder());
     BehaviorManager.registerBuilder(new PlayerBehaviorBuilder());
     BehaviorManager.registerBuilder(new KeyboardMovementBehaviorBuilder());
     BehaviorManager.registerBuilder(new ScrollBehaviorBuilder());
 
-    // TODO: Change this to be read from game config
-    ZoneManager.changeZone(0);
-
     this.resize();
-    this.loop();
+
+    // Begin the preload phase, which waits for various elements to be loaded before starting the game.
+    this.preloading();
   }
 
   /**
@@ -188,16 +200,32 @@ export class Engine implements IMessageHandler {
     }
   }
 
+  private preloading(): void {
+    // Make sure to always update the message bus.
+    MessageBus.update(0);
+
+    if (!BitmapFontManager.updateReady) {
+      requestAnimationFrame(this.preloading.bind(this));
+      return;
+    }
+
+    // Load up zone.  TODO: Make this configurable.
+    ZoneManager.changeZone(0);
+
+    // Kick off the render loop
+    this.loop();
+  }
+
   private loop(): void {
     this.update();
     this.render();
+    requestAnimationFrame(this.loop.bind(this));
   }
 
   public onMessage(message: Message): void {
     const mouseContext = message.context as MouseContext;
     if (message.code === 'MOUSE_DOWN' && mouseContext) {
       Message.send('GAME_START', undefined, undefined);
-      console.log('sending a message');
     }
   }
 
@@ -234,6 +262,5 @@ export class Engine implements IMessageHandler {
         new Float32Array(this._projection.data)
       );
     }
-    requestAnimationFrame(this.loop.bind(this));
   }
 }

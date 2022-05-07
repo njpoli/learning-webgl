@@ -407,6 +407,26 @@
                     "groundCollisionComponent": "groundCollision"
                 }
             ]
+        },
+        {
+            "name": "TestTextObject",
+            "transform": {
+                "position": {
+                    "x": 130,
+                    "y": 30
+                }
+            },
+            "components": [
+                {
+                    "name": "TestText",
+                    "type": "bitmapText",
+                    "text": "Hello World",
+                    "fontName": "default"
+                }
+            ],
+            "behaviors": [
+
+            ]
         }
     ]
 }

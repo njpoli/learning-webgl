@@ -25,8 +25,6 @@ export class Texture implements IMessageHandler {
 
     this._handle = gl.createTexture() as WebGLTexture;
 
-    Message.subscribe(MESSAGE_ASSET_LOADER_ASSET_LOADED + this._name, this);
-
     this.bind();
 
     // This signature is for loading raw data into a texture
@@ -45,6 +43,8 @@ export class Texture implements IMessageHandler {
     const asset = AssetManager.getAsset(this._name) as ImageAsset;
     if (asset) {
       this.loadTextureFromAsset(asset);
+    } else {
+      Message.subscribe(MESSAGE_ASSET_LOADER_ASSET_LOADED + this._name, this);
     }
   }
 
