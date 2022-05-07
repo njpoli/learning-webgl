@@ -8,9 +8,11 @@ import { AssetManager } from './assets/assetManager';
 import { AudioManager } from './audio/audioManager';
 import { BehaviorManager } from './behaviors/behaviorManager';
 import { KeyboardMovementBehaviorBuilder } from './behaviors/keyboardMovementBehavior';
+import { MouseClickBehaviorBuilder } from './behaviors/mouseClickBehavior';
 import { PlayerBehaviorBuilder } from './behaviors/playerBehavior';
 import { RotationBehaviorBuilder } from './behaviors/rotationBehavior';
 import { ScrollBehaviorBuilder } from './behaviors/scrollBehavior';
+import { VisibilityOnMessageBehaviorBuilder } from './behaviors/visibilityOnMessageBehavior';
 import { gl, GLUtilities } from './gl/gl';
 import { BasicShader } from './gl/shaders/basicShader';
 import { BitmapFontManager } from './graphics/bitmapFontManager';
@@ -19,6 +21,7 @@ import { Material } from './graphics/material';
 import { MaterialManager } from './graphics/materialManager';
 import { InputManager, MouseContext } from './input/inputManager';
 import { Matrix4x4 } from './math/matrix4x4';
+import { Vector2 } from './math/vector2';
 import { IMessageHandler } from './message/IMessageHandler';
 import { Message } from './message/message';
 import { MessageBus } from './message/messageBus';
@@ -35,6 +38,10 @@ export class Engine implements IMessageHandler {
   private _gameWidth: number | undefined;
   private _gameHeight: number | undefined;
 
+  private _isFirstUpdate: boolean = true;
+  // @ts-ignore
+  private _aspect: number;
+
   /**
    * Creates a new engine
    * @param width The width of the game in pixels
@@ -50,17 +57,14 @@ export class Engine implements IMessageHandler {
   /**
    * Starts up this engine
    */
-  public start(): void {
-    this._canvas = GLUtilities.initialize();
+  public start(elementName?: string): void {
+    this._canvas = GLUtilities.initialize(elementName);
     if (this._gameWidth && this._gameHeight) {
-      this._canvas.style.width = this._gameWidth + 'px';
-      this._canvas.style.height = this._gameHeight + 'px';
-      this._canvas.width = this._gameWidth;
-      this._canvas.height = this._gameHeight;
+      this._aspect = this._gameWidth / this._gameHeight;
     }
 
     AssetManager.initialize();
-    InputManager.initialize();
+    InputManager.initialize(this._canvas);
     ZoneManager.initialize();
 
     gl.clearColor(99 / 255, 155 / 255, 255 / 255, 1);
@@ -170,6 +174,8 @@ export class Engine implements IMessageHandler {
     BehaviorManager.registerBuilder(new PlayerBehaviorBuilder());
     BehaviorManager.registerBuilder(new KeyboardMovementBehaviorBuilder());
     BehaviorManager.registerBuilder(new ScrollBehaviorBuilder());
+    BehaviorManager.registerBuilder(new MouseClickBehaviorBuilder());
+    BehaviorManager.registerBuilder(new VisibilityOnMessageBehaviorBuilder());
 
     this.resize();
 
@@ -185,18 +191,58 @@ export class Engine implements IMessageHandler {
       if (!this._gameWidth || !this._gameHeight) {
         this._canvas.width = window.innerWidth;
         this._canvas.height = window.innerHeight;
+
+        this._projection = Matrix4x4.orthographic(
+          0,
+          this._canvas.width,
+          this._canvas.height,
+          0,
+          -100.0,
+          100.0
+        );
+
+        gl.viewport(0, 0, this._canvas.width, this._canvas.height);
+      } else {
+        let newWidth = window.innerWidth;
+        let newHeight = window.innerHeight;
+        let newWidthToHeight = newWidth / newHeight;
+        let gameArea = document.getElementById('gameArea');
+
+        if (gameArea) {
+          if (newWidthToHeight > this._aspect) {
+            newWidth = newHeight * this._aspect;
+            gameArea.style.height = newHeight + 'px';
+            gameArea.style.width = newWidth + 'px';
+          } else {
+            newHeight = newWidth / this._aspect;
+            gameArea.style.width = newWidth + 'px';
+            gameArea.style.height = newHeight + 'px';
+          }
+
+          gameArea.style.marginTop = -newHeight / 2 + 'px';
+          gameArea.style.marginLeft = -newWidth / 2 + 'px';
+
+          this._canvas.width = newWidth;
+          this._canvas.height = newHeight;
+
+          this._projection = Matrix4x4.orthographic(
+            0,
+            this._gameWidth,
+            this._gameHeight,
+            0,
+            -100.0,
+            100.0
+          );
+
+          gl.viewport(0, 0, newWidth, newHeight);
+
+          const resolutionScale = new Vector2(
+            newWidth / this._gameWidth,
+            newHeight / this._gameHeight
+          );
+          InputManager.setResolutionScale(resolutionScale);
+        }
       }
-
-      this._projection = Matrix4x4.orthographic(
-        0,
-        this._canvas.width,
-        this._canvas.height,
-        0,
-        -100.0,
-        100.0
-      );
-
-      gl.viewport(0, 0, this._canvas.width, this._canvas.height);
     }
   }
 
@@ -217,6 +263,8 @@ export class Engine implements IMessageHandler {
   }
 
   private loop(): void {
+    if (this._isFirstUpdate) {
+    }
     this.update();
     this.render();
     requestAnimationFrame(this.loop.bind(this));

@@ -98,5 +98,8 @@ export class ZoneManager implements IMessageHandler {
     ZoneManager._activeZone.initialize(zoneData);
     ZoneManager._activeZone.onActivated();
     ZoneManager._activeZone.load();
+
+    // Change state to splash
+    Message.send('GAME_READY', this);
   }
 }

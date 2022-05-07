@@ -1,4 +1,3 @@
-import { BaseComponent } from '../../components/baseComponent';
 import { IComponent } from '../../components/IComponent';
 import { IBehavior } from '../behaviors/IBehavior';
 import { Shader } from '../gl/shader';
@@ -15,6 +14,7 @@ export class SimObject {
   private _scene: Scene | undefined;
   private _components: IComponent[] = [];
   private _behaviors: IBehavior[] = [];
+  private _isVisible: boolean = true;
 
   private _localMatrix: Matrix4x4 = Matrix4x4.identity();
   private _worldMatrix: Matrix4x4 = Matrix4x4.identity();
@@ -43,6 +43,14 @@ export class SimObject {
 
   public get isLoaded(): boolean {
     return this._isLoaded;
+  }
+
+  public get isVisible(): boolean {
+    return this._isVisible;
+  }
+
+  public set isVisible(value: boolean) {
+    this._isVisible = value;
   }
 
   public addChild(child: SimObject): void {
@@ -165,6 +173,10 @@ export class SimObject {
   }
 
   public render(shader: Shader): void {
+    if (!this._isVisible) {
+      return;
+    }
+
     this._components.forEach((component) => {
       component.render(shader);
     });
