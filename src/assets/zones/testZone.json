@@ -44,7 +44,7 @@
                     "name": "pipe1Scroller",
                     "type": "scroll",
                     "velocity": {
-                        "x": -120,
+                        "x": -150,
                         "y": 0
                     },
                     "minPosition": {
@@ -55,9 +55,23 @@
                         "x": 550,
                         "y": 0
                     },
+                    "minResetY": -150,
+                    "maxResetY": 205,
                     "resetMessage": "GAME_RESET",
                     "stopMessage": "PLAYER_DIED",
                     "startMessage": "PLAYER_RESET"
+                },
+                {
+                    "name": "showGamePipe1",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "GAME_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideGamePipe1",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "GAME_HIDE",
+                    "visible": false
                 }
             ],
             "children": [
@@ -94,7 +108,7 @@
                     "transform": {
                         "position": {
                             "x": 1,
-                            "y": -50
+                            "y": -150
                         }
                     },
                     "components": [
@@ -103,7 +117,7 @@
                             "type": "sprite",
                             "materialName": "pipeBody",
                             "width": 30,
-                            "height": 160
+                            "height": 260
                         },
                         {
                             "name": "pipe1CollisionBodyTop",
@@ -116,6 +130,26 @@
                         }
                     ],
                     "behaviors": []
+                },
+                {
+                    "name": "pipe1Score",
+                    "transform": {
+                        "position": {
+                            "x": 34,
+                            "y": 122
+                        }
+                    },
+                    "components": [
+                        {
+                            "name": "scoreCollision",
+                            "type": "collision",
+                            "shape": {
+                                "type": "rectangle",
+                                "width": 10,
+                                "height": 300
+                            }
+                        }
+                    ]
                 },
                 {
                     "name": "pipe1EndBottom",
@@ -193,7 +227,7 @@
                     "name": "pipe2Scroller",
                     "type": "scroll",
                     "velocity": {
-                        "x": -120,
+                        "x": -150,
                         "y": 0
                     },
                     "minPosition": {
@@ -204,9 +238,23 @@
                         "x": 550,
                         "y": 0
                     },
+                    "minResetY": -150,
+                    "maxResetY": 205,
                     "resetMessage": "GAME_RESET",
                     "stopMessage": "PLAYER_DIED",
                     "startMessage": "PLAYER_RESET"
+                },
+                {
+                    "name": "showGamePipe2",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "GAME_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideGamePipe2",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "GAME_HIDE",
+                    "visible": false
                 }
             ],
             "children": [
@@ -243,7 +291,7 @@
                     "transform": {
                         "position": {
                             "x": 1,
-                            "y": -50
+                            "y": -150
                         }
                     },
                     "components": [
@@ -252,7 +300,7 @@
                             "type": "sprite",
                             "materialName": "pipeBody",
                             "width": 30,
-                            "height": 160
+                            "height": 260
                         },
                         {
                             "name": "pipe1CollisionBodyTop",
@@ -265,6 +313,26 @@
                         }
                     ],
                     "behaviors": []
+                },
+                {
+                    "name": "pipe2Score",
+                    "transform": {
+                        "position": {
+                            "x": 34,
+                            "y": 122
+                        }
+                    },
+                    "components": [
+                        {
+                            "name": "scoreCollision",
+                            "type": "collision",
+                            "shape": {
+                                "type": "rectangle",
+                                "width": 10,
+                                "height": 128
+                            }
+                        }
+                    ]
                 },
                 {
                     "name": "pipe1EndBottom",
@@ -377,6 +445,7 @@
                     "frameWidth": 18,
                     "frameHeight": 12,
                     "frameCount": 3,
+                    "frameTime": 88,
                     "frameSequence": [0,1,2,1],
                     "origin": {
                         "x": 0.5,
@@ -404,28 +473,405 @@
                     "type": "player",
                     "animatedSpriteName": "birdAnimatedSprite",
                     "playerCollisionComponent": "birdCollision",
-                    "groundCollisionComponent": "groundCollision"
+                    "groundCollisionComponent": "groundCollision",
+                    "scoreCollisionComponent": "scoreCollision"
+                },
+                {
+                    "name": "showGameBird",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "GAME_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideGameBird",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "GAME_HIDE",
+                    "visible": false
                 }
             ]
         },
         {
-            "name": "TestTextObject",
+            "name": "counterText",
             "transform": {
                 "position": {
-                    "x": 130,
+                    "x": 235,
                     "y": 30
+                },
+                "scale": {
+                    "x": 2,
+                    "y": 2
                 }
             },
             "components": [
                 {
-                    "name": "TestText",
+                    "name": "counterText",
                     "type": "bitmapText",
-                    "text": "Hello World",
+                    "text": "0",
                     "fontName": "default"
                 }
             ],
             "behaviors": [
-
+                {
+                    "name": "showCounterText",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "GAME_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideCounterText",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "GAME_HIDE",
+                    "visible": false
+                }
+            ]
+        },
+        {
+            "name": "title",
+            "transform": {
+                "position": {
+                    "x": 75,
+                    "y": 150
+                },
+                "scale": {
+                    "x": 2,
+                    "y": 2
+                }
+            },
+            "components": [
+                {
+                    "name": "titleSprite",
+                    "type": "sprite",
+                    "materialName": "title",
+                    "width": 180,
+                    "height": 15
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "showTitle",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "SPLASH_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideTitle",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "SPLASH_HIDE",
+                    "visible": false
+                }
+            ]
+        },
+        {
+            "name": "playButton",
+            "transform": {
+                "position": {
+                    "x": 150,
+                    "y": 350
+                },
+                "scale": {
+                    "x": 2,
+                    "y": 2
+                }
+            },
+            "components": [
+                {
+                    "name": "playButtonSprite",
+                    "type": "sprite",
+                    "materialName": "playButton",
+                    "width": 103,
+                    "height": 25
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "showPlayButton",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "SPLASH_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hidePlayButton",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "SPLASH_HIDE",
+                    "visible": false
+                },
+                {
+                    "name": "playButtonClick",
+                    "type": "mouseClick",
+                    "width": 500,
+                    "height": 300,
+                    "messageCode": "GAME_RESET"
+                }
+            ]
+        },
+        {
+            "name": "titleBird",
+            "transform": {
+                "position": {
+                    "x": 250,
+                    "y": 280
+                },
+                "scale": {
+                    "x": 3,
+                    "y": 3
+                }
+            },
+            "components": [
+                {
+                    "name": "birdAnimatedSprite",
+                    "materialName": "bird",
+                    "type": "animatedSprite",
+                    "frameWidth": 18,
+                    "frameHeight": 12,
+                    "frameCount": 3,
+                    "frameTime": 88,
+                    "frameSequence": [0,1,2,1],
+                    "origin": {
+                        "x": 0.5,
+                        "y": 0.5
+                    }
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "showTitleBird",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "SPLASH_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideTitleBird",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "SPLASH_HIDE",
+                    "visible": false
+                }
+            ]
+        },
+        {
+            "name": "tutorial",
+            "transform": {
+                "position": {
+                    "x": 60,
+                    "y": 257
+                },
+                "scale": {
+                    "x": 3,
+                    "y": 3
+                }
+            },
+            "components": [
+                {
+                    "name": "tutorialSprite",
+                    "type": "sprite",
+                    "materialName": "tutorial",
+                    "width": 128,
+                    "height": 67
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "showTutorial",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "TUTORIAL_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hidePlayButton",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "TUTORIAL_HIDE",
+                    "visible": false
+                },
+                {
+                    "name": "tutorialButtonClick",
+                    "type": "mouseClick",
+                    "width": 500,
+                    "height": 300,
+                    "messageCode": "GAME_START"
+                }
+            ]
+        },
+        {
+            "name": "score",
+            "transform": {
+                "position": {
+                    "x": 95,
+                    "y": 257
+                },
+                "scale": {
+                    "x": 2,
+                    "y": 2
+                }
+            },
+            "components": [
+                {
+                    "name": "scoreboardSprite",
+                    "type": "sprite",
+                    "materialName": "scoreboard",
+                    "width": 157,
+                    "height": 113
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "showScoreboard",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "RESET_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideScoreboard",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "RESET_HIDE",
+                    "visible": false
+                }
+            ]
+        },
+        {
+            "name": "scoreText",
+            "transform": {
+                "position": {
+                    "x": 205,
+                    "y": 288
+                },
+                "scale": {
+                    "x": 2,
+                    "y": 2
+                }
+            },
+            "components": [
+                {
+                    "name": "scoreText",
+                    "type": "bitmapText",
+                    "text": "0",
+                    "fontName": "default"
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "showScoreText",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "RESET_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideScoreText",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "RESET_HIDE",
+                    "visible": false
+                }
+            ]
+        },
+        {
+            "name": "bestText",
+            "transform": {
+                "position": {
+                    "x": 205,
+                    "y": 400
+                },
+                "scale": {
+                    "x": 2,
+                    "y": 2
+                }
+            },
+            "components": [
+                {
+                    "name": "bestText",
+                    "type": "bitmapText",
+                    "text": "0",
+                    "fontName": "default"
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "showBestText",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "RESET_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideBestText",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "RESET_HIDE",
+                    "visible": false
+                }
+            ]
+        },
+        {
+            "name": "gameOverText",
+            "transform": {
+                "position": {
+                    "x": 105,
+                    "y": 170
+                },
+                "scale": {
+                    "x": 1.5,
+                    "y": 1.5
+                }
+            },
+            "components": [
+                {
+                    "name": "gameOverText",
+                    "type": "bitmapText",
+                    "text": "Game Over",
+                    "fontName": "default"
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "showGameOverText",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "RESET_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideGameOverText",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "RESET_HIDE",
+                    "visible": false
+                }
+            ]
+        },
+        {
+            "name": "restartButton",
+            "transform": {
+                "position": {
+                    "x": 100,
+                    "y": 500
+                },
+                "scale": {
+                    "x": 1.75,
+                    "y": 1.75
+                }
+            },
+            "components": [
+                {
+                    "name": "restartButtonSprite",
+                    "type": "sprite",
+                    "materialName": "restartButton",
+                    "width": 175,
+                    "height": 25
+                }
+            ],
+            "behaviors": [
+                {
+                    "name": "showRestartButton",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "RESET_SHOW",
+                    "visible": true
+                },
+                {
+                    "name": "hideRestartButton",
+                    "type": "visibilityOnMessage",
+                    "messageCode": "RESET_HIDE",
+                    "visible": false
+                },
+                {
+                    "name": "restartButtonClick",
+                    "type": "mouseClick",
+                    "width": 700,
+                    "height": 700,
+                    "messageCode": "GAME_RESET"
+                }
             ]
         }
     ]
