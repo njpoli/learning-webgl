@@ -19,10 +19,9 @@ import { BitmapFontManager } from './graphics/bitmapFontManager';
 import { Color } from './graphics/color';
 import { Material } from './graphics/material';
 import { MaterialManager } from './graphics/materialManager';
-import { InputManager, MouseContext } from './input/inputManager';
+import { InputManager } from './input/inputManager';
 import { Matrix4x4 } from './math/matrix4x4';
 import { Vector2 } from './math/vector2';
-import { IMessageHandler } from './message/IMessageHandler';
 import { Message } from './message/message';
 import { MessageBus } from './message/messageBus';
 import { ZoneManager } from './world/zoneManager';
@@ -30,7 +29,7 @@ import { ZoneManager } from './world/zoneManager';
 /**
  * The main game engine class
  */
-export class Engine implements IMessageHandler {
+export class Engine {
   private _canvas: HTMLCanvasElement | undefined;
   private _basicShader: BasicShader | undefined;
   private _projection: Matrix4x4 | undefined;
@@ -50,8 +49,6 @@ export class Engine implements IMessageHandler {
   public constructor(width?: number, height?: number) {
     this._gameWidth = width;
     this._gameHeight = height;
-
-    Message.subscribe('MOUSE_DOWN', this);
   }
 
   /**
@@ -141,6 +138,42 @@ export class Engine implements IMessageHandler {
       new Material(
         'grass',
         'src/assets/textures/grass_bigger.png',
+        Color.white()
+      )
+    );
+
+    MaterialManager.registerMaterial(
+      new Material(
+        'playButton',
+        'src/assets/textures/play_button.png',
+        Color.white()
+      )
+    );
+
+    MaterialManager.registerMaterial(
+      new Material(
+        'restartButton',
+        'src/assets/textures/restart_button.png',
+        Color.white()
+      )
+    );
+
+    MaterialManager.registerMaterial(
+      new Material(
+        'scoreboard',
+        'src/assets/textures/scoreboard.png',
+        Color.white()
+      )
+    );
+
+    MaterialManager.registerMaterial(
+      new Material('title', 'src/assets/textures/title.png', Color.white())
+    );
+
+    MaterialManager.registerMaterial(
+      new Material(
+        'tutorial',
+        'src/assets/textures/tutorial.png',
         Color.white()
       )
     );
@@ -268,13 +301,6 @@ export class Engine implements IMessageHandler {
     this.update();
     this.render();
     requestAnimationFrame(this.loop.bind(this));
-  }
-
-  public onMessage(message: Message): void {
-    const mouseContext = message.context as MouseContext;
-    if (message.code === 'MOUSE_DOWN' && mouseContext) {
-      Message.send('GAME_START', undefined, undefined);
-    }
   }
 
   private loadAll(requireContext: __WebpackModuleApi.RequireContext) {

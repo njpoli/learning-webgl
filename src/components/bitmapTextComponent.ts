@@ -1,6 +1,8 @@
 import { Shader } from '../core/gl/shader';
 import { BitmapText } from '../core/graphics/bitmapText';
 import { Vector3 } from '../core/math/vector3';
+import { IMessageHandler } from '../core/message/IMessageHandler';
+import { Message } from '../core/message/message';
 import { BaseComponent } from './baseComponent';
 import { IComponent } from './IComponent';
 import { IComponentBuilder } from './IComponentBuilder';
@@ -46,7 +48,10 @@ export class BitmapTextComponentBuilder implements IComponentBuilder {
   }
 }
 
-export class BitmapTextComponent extends BaseComponent {
+export class BitmapTextComponent
+  extends BaseComponent
+  implements IMessageHandler
+{
   private _bitmapText: BitmapText;
   private _fontName: string;
 
@@ -59,6 +64,15 @@ export class BitmapTextComponent extends BaseComponent {
     }
 
     this._bitmapText.text = data.text;
+
+    // Listen for text updates
+    Message.subscribe(this.name + ':SetText', this);
+  }
+
+  onMessage(message: Message): void {
+    if ((message.code = this.name + ':SetText')) {
+      this._bitmapText.text = String(message.context);
+    }
   }
 
   public load(): void {

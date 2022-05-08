@@ -12,6 +12,10 @@ export class ScrollBehaviorData implements IBehaviorData {
   public velocity: Vector2 = Vector2.zero;
   public minPosition: Vector2 = Vector2.zero;
   public resetPosition: Vector2 = Vector2.zero;
+  // @ts-ignore
+  public minResetY: number;
+  // @ts-ignore
+  public maxResetY: number;
   public startMessage: string | undefined;
   public stopMessage: string | undefined;
   public resetMessage: string | undefined;
@@ -58,6 +62,14 @@ export class ScrollBehaviorData implements IBehaviorData {
         'ScrollBehaviorData requires property "resetPosition" to be defined.'
       );
     }
+
+    if (json.minResetY !== undefined) {
+      this.minResetY = Number(json.minResetY);
+    }
+
+    if (json.maxResetY !== undefined) {
+      this.maxResetY = Number(json.maxResetY);
+    }
   }
 }
 
@@ -77,6 +89,10 @@ export class ScrollBehavior extends BaseBehavior implements IMessageHandler {
   private _velocity: Vector2 = Vector2.zero;
   private _minPosition: Vector2 = Vector2.zero;
   private _resetPosition: Vector2 = Vector2.zero;
+  // @ts-ignore
+  private _minResetY: number;
+  // @ts-ignore
+  private _maxResetY: number;
   private _startMessage: string | undefined;
   private _stopMessage: string | undefined;
   private _resetMessage: string | undefined;
@@ -92,6 +108,14 @@ export class ScrollBehavior extends BaseBehavior implements IMessageHandler {
     this._startMessage = data.startMessage;
     this._stopMessage = data.stopMessage;
     this._resetMessage = data.resetMessage;
+
+    if (data.minResetY !== undefined) {
+      this._minResetY = data.minResetY;
+    }
+
+    if (data.maxResetY !== undefined) {
+      this._maxResetY = data.maxResetY;
+    }
   }
 
   public updateReady(): void {
@@ -108,6 +132,8 @@ export class ScrollBehavior extends BaseBehavior implements IMessageHandler {
     if (this._resetMessage !== undefined) {
       Message.subscribe(this._resetMessage, this);
     }
+
+    this._initialPosition.copyFrom(this._owner!.transform.position.toVector2());
   }
 
   public update(time: number): void {
@@ -119,9 +145,14 @@ export class ScrollBehavior extends BaseBehavior implements IMessageHandler {
           .toVector3()
       );
 
+      const scrollY =
+        this._minResetY !== undefined && this._maxResetY !== undefined;
+
       if (
         this._owner!.transform.position.x <= this._minPosition.x &&
-        this._owner!.transform.position.y <= this._minPosition.y
+        (scrollY ||
+          (!scrollY &&
+            this._owner!.transform.position.y <= this._minPosition.y))
       ) {
         this.reset();
       }
@@ -143,7 +174,22 @@ export class ScrollBehavior extends BaseBehavior implements IMessageHandler {
   }
 
   private reset(): void {
-    this._owner!.transform.position.copyFrom(this._resetPosition.toVector3());
+    if (this._minResetY !== undefined && this._maxResetY !== undefined) {
+      this._owner!.transform.position.set(
+        this._resetPosition.x,
+        this.getRandomY()
+      );
+    } else {
+      this._owner!.transform.position.copyFrom(this._resetPosition.toVector3());
+    }
+  }
+
+  private getRandomY(): number {
+    // Inclusive of min and max set in the data
+    return (
+      Math.floor(Math.random() * (this._maxResetY - this._minResetY + 1)) +
+      this._minResetY
+    );
   }
 
   private initial(): void {

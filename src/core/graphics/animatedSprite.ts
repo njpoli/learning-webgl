@@ -19,13 +19,26 @@ class UVInfo {
   }
 }
 
+export class AnimatedSpriteInfo {
+  // @ts-ignore
+  public name: string;
+  // @ts-ignore
+  public materialName: string;
+  public width: number = 100;
+  public height: number = 100;
+  public frameWidth: number = 10;
+  public frameHeight: number = 10;
+  public frameCount: number = 1;
+  public frameSequence: number[] = [];
+  public frameTime: number = 60;
+}
+
 export class AnimatedSprite extends Sprite implements IMessageHandler {
   private _frameHeight: number;
   private _frameWidth: number;
   private _frameCount: number;
   private _frameSequence: number[];
-  // TODO: Make this configurable
-  private _frameTime: number = 121;
+  private _frameTime: number = 33;
   private _frameUVs: UVInfo[] = [];
   private _currentTime: number = 0;
 
@@ -43,7 +56,8 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
     frameWidth: number = 10,
     frameHeight: number = 10,
     frameCount: number = 1,
-    frameSequence: number[] = []
+    frameSequence: number[] = [],
+    frameTime: number = 100
   ) {
     super(name, materialName, width, height);
 
@@ -51,6 +65,7 @@ export class AnimatedSprite extends Sprite implements IMessageHandler {
     this._frameHeight = frameHeight;
     this._frameCount = frameCount;
     this._frameSequence = frameSequence;
+    this._frameTime = frameTime;
 
     if (this._material) {
       Message.subscribe(

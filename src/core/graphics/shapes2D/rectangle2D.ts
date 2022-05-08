@@ -9,6 +9,18 @@ export class Rectangle2D implements IShape2D {
   public width: number | undefined;
   public height: number | undefined;
 
+  public constructor(
+    x: number = 0,
+    y: number = 0,
+    width: number = 0,
+    height: number = 0
+  ) {
+    this.position.x = x;
+    this.position.y = y;
+    this.width = width;
+    this.height = height;
+  }
+
   public get offset(): Vector2 {
     return new Vector2(
       //@ts-ignore
@@ -39,39 +51,29 @@ export class Rectangle2D implements IShape2D {
   }
 
   public intersects(otherShape: IShape2D): boolean {
-    if (
-      otherShape instanceof Rectangle2D &&
-      otherShape.width &&
-      otherShape.height
-    ) {
-      return (
-        this.pointInShape(otherShape.position) ||
-        this.pointInShape(
-          new Vector2(
-            otherShape.position.x + otherShape.width,
-            otherShape.position.y
-          )
-        ) ||
-        this.pointInShape(
-          new Vector2(
-            otherShape.position.x + otherShape.width,
-            otherShape.position.y + otherShape.height
-          )
-        ) ||
-        this.pointInShape(
-          new Vector2(
-            otherShape.position.x,
-            otherShape.position.y + otherShape.height
-          )
-        )
-      );
+    if (otherShape instanceof Rectangle2D) {
+      const a = this.getExtents(this);
+      const b = this.getExtents(otherShape);
+
+      if (
+        a.width !== undefined &&
+        a.height !== undefined &&
+        b.width !== undefined &&
+        b.height !== undefined
+      )
+        return (
+          a.position.x <= b.width &&
+          a.width >= b.position.x &&
+          a.position.y <= b.height &&
+          a.height >= b.position.y
+        );
     }
 
     if (
       otherShape instanceof Circle2D &&
       otherShape.radius &&
-      this.width &&
-      this.height
+      this.width !== undefined &&
+      this.height !== undefined
     ) {
       const deltaX =
         otherShape.position.x -
@@ -119,5 +121,23 @@ export class Rectangle2D implements IShape2D {
     }
 
     return false;
+  }
+
+  private getExtents(shape: Rectangle2D): Rectangle2D {
+    if (shape.width === undefined || shape.height === undefined) {
+      throw new Error('getExtents needs a shape with a height and a width');
+    }
+
+    const x =
+      shape.width < 0 ? shape.position.x - shape.width : shape.position.x;
+    const y =
+      shape.height < 0 ? shape.position.y - shape.height : shape.position.y;
+
+    const extentX =
+      shape.width < 0 ? shape.position.x : shape.position.x + shape.width;
+    const extentY =
+      shape.height < 0 ? shape.position.y : shape.position.y + shape.height;
+
+    return new Rectangle2D(x, y, extentX, extentY);
   }
 }

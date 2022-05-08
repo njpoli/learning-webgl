@@ -83,8 +83,7 @@ export class CollisionManager {
               comp,
               other
             );
-            Message.sendPriority('COLLISION_ENTRY:' + comp.name, this, coll);
-            Message.sendPriority('COLLISION_ENTRY:' + other.name, this, coll);
+            Message.sendPriority('COLLISION_ENTRY', undefined, coll);
             this._collisionData.push(coll);
           }
         }
@@ -104,9 +103,7 @@ export class CollisionManager {
         // @ts-ignore
         data.b?.onCollisionExit(data.a);
         // @ts-ignore
-        Message.sendPriority('COLLISION_EXIT:' + data.a.name, this, data);
-        // @ts-ignore
-        Message.sendPriority('COLLISION_EXIT:' + data.b.name, this, data);
+        Message.sendPriority('COLLISION_EXIT', undefined, data);
       }
     }
 

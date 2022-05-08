@@ -16,6 +16,7 @@ export class AnimatedSpriteComponentData
   public frameCount: number = 0;
   public frameSequence: number[] = [];
   public autoPlay: boolean = true;
+  public frameTime: number = 33;
 
   public setFromJson(json: any): void {
     super.setFromJson(json);
@@ -51,6 +52,10 @@ export class AnimatedSpriteComponentData
     } else {
       this.frameSequence = json.frameSequence;
     }
+
+    if (json.frameTime !== undefined) {
+      this.frameTime = Number(json.frameTime);
+    }
   }
 }
 
@@ -83,7 +88,8 @@ export class AnimatedSpriteComponent extends BaseComponent {
       data.frameWidth,
       data.frameHeight,
       data.frameCount,
-      data.frameSequence
+      data.frameSequence,
+      data.frameTime
     );
 
     // Have to do this even though calling super because of this._sprite call
